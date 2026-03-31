@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -15,6 +15,7 @@
 
   body {
     @apply h-screen overflow-hidden bg-slate-950 text-slate-100 antialiased;
+    font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   #root {
@@ -22,33 +23,23 @@
   }
 
   ::selection {
-    @apply bg-cyan-400/30 text-white;
+    @apply bg-red-500/25 text-white;
   }
 }
 
 @layer utilities {
   .bg-mesh {
-    background-image:
-      radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), transparent 32%),
-      radial-gradient(circle at top right, rgba(59, 130, 246, 0.16), transparent 28%),
-      radial-gradient(circle at bottom center, rgba(14, 165, 233, 0.12), transparent 32%),
-      linear-gradient(180deg, rgba(2, 6, 23, 0.94), rgba(2, 6, 23, 1));
+    background-color: rgb(15 15 15);
+    background-image: none;
   }
 
   .bg-mesh-light {
-    background-image:
-      radial-gradient(circle at top left, rgba(56, 189, 248, 0.22), transparent 32%),
-      radial-gradient(circle at top right, rgba(125, 211, 252, 0.22), transparent 30%),
-      radial-gradient(circle at bottom center, rgba(129, 140, 248, 0.14), transparent 32%),
-      linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 1));
+    background-color: rgb(249 249 249);
+    background-image: none;
   }
 
   .panel-grid {
-    background-image:
-      linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
-    background-size: 72px 72px;
-    background-position: center;
+    background-image: none;
   }
 }
 
@@ -75,10 +66,10 @@
 .theme-dark textarea:-webkit-autofill,
 .theme-dark textarea:-webkit-autofill:hover,
 .theme-dark textarea:-webkit-autofill:focus {
-  -webkit-text-fill-color: rgb(241 245 249);
-  -webkit-box-shadow: 0 0 0 1000px rgba(2, 6, 23, 0.88) inset;
+  -webkit-text-fill-color: rgb(241 241 241);
+  -webkit-box-shadow: 0 0 0 1000px rgba(18, 18, 18, 0.96) inset;
   transition: background-color 9999s ease-in-out 0s;
-  caret-color: rgb(165 243 252);
+  caret-color: rgb(255 0 51);
 }
 
 .theme-light input:-webkit-autofill,
@@ -87,8 +78,8 @@
 .theme-light textarea:-webkit-autofill,
 .theme-light textarea:-webkit-autofill:hover,
 .theme-light textarea:-webkit-autofill:focus {
-  -webkit-text-fill-color: rgb(15 23 42);
+  -webkit-text-fill-color: rgb(15 15 15);
   -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.92) inset;
   transition: background-color 9999s ease-in-out 0s;
-  caret-color: rgb(14 165 233);
+  caret-color: rgb(255 0 51);
 }

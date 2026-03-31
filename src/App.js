@@ -36,12 +36,15 @@ const LANGUAGE_OPTIONS = [
 ];
 
 const VIDEO_RATIO = 16 / 9;
-const GRID_SAFE_INSET = 24;
 const SETTINGS_TRANSITION_MS = 320;
 const APP_STATE_STORAGE_KEY = "multi-tv-state";
 const THEME_STORAGE_KEY = "multi-tv-theme";
 const LANGUAGE_STORAGE_KEY = "multi-tv-language";
 const RTL_LANGUAGES = new Set(["ar"]);
+const DEFAULT_USERNAME = "username";
+const POPUP_MIN_WIDTH = 360;
+const POPUP_MIN_HEIGHT = 240;
+const POPUP_OFFSET_STEP = 28;
 
 const TRANSLATIONS = {
   tr: {
@@ -50,9 +53,10 @@ const TRANSLATIONS = {
     settingsButton: "Ayarlar",
     controlCenter: "Kontrol Merkezi",
     settingsTitle: "Ayarlar",
-    settingsDescription: "Yayın başlıklarını, tema ayarını, dil seçimini ve paylaşım bağlantısını tek panelden yönet.",
-    themeTitle: "Tema",
-    themeDescription: "Light ve dark görünüm arasında geçiş yap.",
+    handleTitle: "Kullanıcı adı",
+    handleDescription: "Header'da görünen @username alanını düzenle.",
+    handleLabel: "Kullanıcı adı",
+    handlePlaceholder: "username",
     languageTitle: "Dil",
     languageDescription: "Arayüz dilini değiştir.",
     activeSlotCount: "Aktif slot sayısı",
@@ -65,11 +69,10 @@ const TRANSLATIONS = {
     titlePlaceholder: "Yayın adı...",
     emptySlot: "Boş Slot",
     emptySlotDescription: "Ayarlardan bir YouTube yayın kimliği ekleyerek bu alanı doldurabilirsin.",
-    selected: "Seçili",
     liveStream: "Canlı Yayın",
     slugHelpTitle: "Slug nasıl bulunur?",
     slugHelpText: "YouTube bağlantısındaki",
-    slugHelpText2: "bölümündeki değeri girmen yeterli. Embed formatı:",
+    slugHelpText2: "bölümündeki değeri girmen yeterli.",
     shareTitle: "Paylaşılabilir görünüm",
     shareDescription: "Mevcut grid yapısı, tema seçimi ve tüm yayın bilgileri URL içine kodlanır. Linki açan herkes aynı düzeni görür.",
     createShareUrl: "Paylaşım URL'si Oluştur",
@@ -79,9 +82,9 @@ const TRANSLATIONS = {
     manualCopy: "Panoya erişim yok, URL'yi elle kopyalayabilirsin",
     copyError: "Kopyalama başarısız oldu",
     urlReady: "URL hazır",
+    openPopup: "Pencerede aç",
+    closePopup: "Pencereyi kapat",
     reset: "Resetle",
-    cancel: "İptal",
-    save: "Kaydet",
     closeSettings: "Ayarları kapat",
   },
   en: {
@@ -90,9 +93,10 @@ const TRANSLATIONS = {
     settingsButton: "Settings",
     controlCenter: "Control Center",
     settingsTitle: "Settings",
-    settingsDescription: "Manage stream titles, theme, language, and the share link from one panel.",
-    themeTitle: "Theme",
-    themeDescription: "Switch between light and dark appearance.",
+    handleTitle: "Username",
+    handleDescription: "Edit the @username text shown in the header.",
+    handleLabel: "Username",
+    handlePlaceholder: "username",
     languageTitle: "Language",
     languageDescription: "Change the interface language.",
     activeSlotCount: "Active slot count",
@@ -105,11 +109,10 @@ const TRANSLATIONS = {
     titlePlaceholder: "Stream title...",
     emptySlot: "Empty Slot",
     emptySlotDescription: "Add a YouTube stream ID from settings to fill this area.",
-    selected: "Selected",
     liveStream: "Live Stream",
     slugHelpTitle: "How to find the slug?",
     slugHelpText: "Use the value in the YouTube link after",
-    slugHelpText2: ". Embed format:",
+    slugHelpText2: ".",
     shareTitle: "Shareable view",
     shareDescription: "The current grid, selected theme, language, and all stream data are encoded into the URL. Anyone opening the link sees the same setup.",
     createShareUrl: "Create Share URL",
@@ -119,9 +122,9 @@ const TRANSLATIONS = {
     manualCopy: "Clipboard is unavailable, you can copy the URL manually",
     copyError: "Copy failed",
     urlReady: "URL ready",
+    openPopup: "Open in popup",
+    closePopup: "Close popup",
     reset: "Reset",
-    cancel: "Cancel",
-    save: "Save",
     closeSettings: "Close settings",
   },
   de: {
@@ -130,9 +133,10 @@ const TRANSLATIONS = {
     settingsButton: "Einstellungen",
     controlCenter: "Kontrollzentrum",
     settingsTitle: "Einstellungen",
-    settingsDescription: "Verwalte Stream-Titel, Thema, Sprache und den Freigabelink in einem Panel.",
-    themeTitle: "Thema",
-    themeDescription: "Zwischen hellem und dunklem Erscheinungsbild wechseln.",
+    handleTitle: "Benutzername",
+    handleDescription: "Bearbeite den im Header angezeigten @username-Text.",
+    handleLabel: "Benutzername",
+    handlePlaceholder: "username",
     languageTitle: "Sprache",
     languageDescription: "Die Sprache der Oberflaeche aendern.",
     activeSlotCount: "Aktive Slot-Anzahl",
@@ -145,11 +149,10 @@ const TRANSLATIONS = {
     titlePlaceholder: "Stream-Titel...",
     emptySlot: "Leerer Slot",
     emptySlotDescription: "Fuege in den Einstellungen eine YouTube-Stream-ID hinzu, um diesen Bereich zu fuellen.",
-    selected: "Ausgewahlt",
     liveStream: "Live-Stream",
     slugHelpTitle: "Wie findet man den Slug?",
     slugHelpText: "Verwende den Wert im YouTube-Link nach",
-    slugHelpText2: ". Embed-Format:",
+    slugHelpText2: ".",
     shareTitle: "Teilbare Ansicht",
     shareDescription: "Das aktuelle Grid, das Thema, die Sprache und alle Stream-Daten werden in die URL kodiert. Jeder mit dem Link sieht dieselbe Konfiguration.",
     createShareUrl: "Freigabe-URL erstellen",
@@ -159,9 +162,9 @@ const TRANSLATIONS = {
     manualCopy: "Keine Zwischenablage verfuegbar, du kannst die URL manuell kopieren",
     copyError: "Kopieren fehlgeschlagen",
     urlReady: "URL bereit",
+    openPopup: "Im Popup oeffnen",
+    closePopup: "Popup schliessen",
     reset: "Zuruecksetzen",
-    cancel: "Abbrechen",
-    save: "Speichern",
     closeSettings: "Einstellungen schliessen",
   },
   fr: {
@@ -170,9 +173,10 @@ const TRANSLATIONS = {
     settingsButton: "Parametres",
     controlCenter: "Centre de controle",
     settingsTitle: "Parametres",
-    settingsDescription: "Gerez les titres des flux, le theme, la langue et le lien de partage depuis un seul panneau.",
-    themeTitle: "Theme",
-    themeDescription: "Basculez entre l'apparence claire et sombre.",
+    handleTitle: "Nom d'utilisateur",
+    handleDescription: "Modifiez le texte @username affiche dans l'en-tete.",
+    handleLabel: "Nom d'utilisateur",
+    handlePlaceholder: "username",
     languageTitle: "Langue",
     languageDescription: "Changer la langue de l'interface.",
     activeSlotCount: "Nombre d'emplacements actifs",
@@ -185,11 +189,10 @@ const TRANSLATIONS = {
     titlePlaceholder: "Titre du flux...",
     emptySlot: "Emplacement vide",
     emptySlotDescription: "Ajoutez un identifiant de flux YouTube dans les parametres pour remplir cette zone.",
-    selected: "Selectionne",
     liveStream: "En direct",
     slugHelpTitle: "Comment trouver le slug ?",
     slugHelpText: "Utilisez la valeur dans le lien YouTube apres",
-    slugHelpText2: ". Format d'integration :",
+    slugHelpText2: ".",
     shareTitle: "Vue partageable",
     shareDescription: "La grille actuelle, le theme, la langue et toutes les donnees des flux sont encodes dans l'URL. Toute personne ouvrant le lien voit la meme configuration.",
     createShareUrl: "Creer l'URL de partage",
@@ -199,9 +202,9 @@ const TRANSLATIONS = {
     manualCopy: "Le presse-papiers est indisponible, vous pouvez copier l'URL manuellement",
     copyError: "La copie a echoue",
     urlReady: "URL prete",
+    openPopup: "Ouvrir en fenetre",
+    closePopup: "Fermer la fenetre",
     reset: "Reinitialiser",
-    cancel: "Annuler",
-    save: "Enregistrer",
     closeSettings: "Fermer les parametres",
   },
   zh: {
@@ -210,9 +213,10 @@ const TRANSLATIONS = {
     settingsButton: "设置",
     controlCenter: "控制中心",
     settingsTitle: "设置",
-    settingsDescription: "在一个面板中管理直播标题、主题、语言和分享链接。",
-    themeTitle: "主题",
-    themeDescription: "在浅色和深色外观之间切换。",
+    handleTitle: "用户名",
+    handleDescription: "编辑头部显示的 @username 文本。",
+    handleLabel: "用户名",
+    handlePlaceholder: "username",
     languageTitle: "语言",
     languageDescription: "更改界面语言。",
     activeSlotCount: "活动槽位数量",
@@ -225,11 +229,10 @@ const TRANSLATIONS = {
     titlePlaceholder: "直播标题...",
     emptySlot: "空白槽位",
     emptySlotDescription: "在设置中添加一个 YouTube 直播 ID 来填充此区域。",
-    selected: "已选中",
     liveStream: "直播中",
     slugHelpTitle: "如何找到 slug？",
     slugHelpText: "使用 YouTube 链接中",
-    slugHelpText2: "后面的值。嵌入格式：",
+    slugHelpText2: "后面的值",
     shareTitle: "可分享视图",
     shareDescription: "当前网格、主题、语言以及所有直播数据都会编码进 URL。任何打开该链接的人都会看到相同布局。",
     createShareUrl: "生成分享链接",
@@ -239,9 +242,9 @@ const TRANSLATIONS = {
     manualCopy: "无法访问剪贴板，你可以手动复制该 URL",
     copyError: "复制失败",
     urlReady: "URL 已就绪",
+    openPopup: "弹出打开",
+    closePopup: "关闭弹窗",
     reset: "重置",
-    cancel: "取消",
-    save: "保存",
     closeSettings: "关闭设置",
   },
   ar: {
@@ -250,9 +253,10 @@ const TRANSLATIONS = {
     settingsButton: "الإعدادات",
     controlCenter: "مركز التحكم",
     settingsTitle: "الإعدادات",
-    settingsDescription: "أدر عناوين البثوث والمظهر واللغة ورابط المشاركة من لوحة واحدة.",
-    themeTitle: "المظهر",
-    themeDescription: "بدّل بين الوضع الفاتح والداكن.",
+    handleTitle: "اسم المستخدم",
+    handleDescription: "عدّل نص @username الظاهر في الترويسة.",
+    handleLabel: "اسم المستخدم",
+    handlePlaceholder: "username",
     languageTitle: "اللغة",
     languageDescription: "غيّر لغة الواجهة.",
     activeSlotCount: "عدد الخانات النشطة",
@@ -265,11 +269,10 @@ const TRANSLATIONS = {
     titlePlaceholder: "عنوان البث...",
     emptySlot: "خانة فارغة",
     emptySlotDescription: "أضف معرّف بث YouTube من الإعدادات لملء هذه المساحة.",
-    selected: "محدد",
     liveStream: "بث مباشر",
     slugHelpTitle: "كيف تجد الـ slug؟",
     slugHelpText: "استخدم القيمة الموجودة في رابط YouTube بعد",
-    slugHelpText2: ". صيغة التضمين:",
+    slugHelpText2: ".",
     shareTitle: "عرض قابل للمشاركة",
     shareDescription: "يتم ترميز الشبكة الحالية والمظهر واللغة وكل بيانات البث داخل الرابط. أي شخص يفتح الرابط سيرى نفس الترتيب.",
     createShareUrl: "إنشاء رابط المشاركة",
@@ -279,15 +282,24 @@ const TRANSLATIONS = {
     manualCopy: "الحافظة غير متاحة، يمكنك نسخ الرابط يدوياً",
     copyError: "فشل النسخ",
     urlReady: "الرابط جاهز",
+    openPopup: "فتح في نافذة",
+    closePopup: "إغلاق النافذة",
     reset: "إعادة تعيين",
-    cancel: "إلغاء",
-    save: "حفظ",
     closeSettings: "إغلاق الإعدادات",
   },
 };
 
 function cn(...parts) {
   return parts.filter(Boolean).join(" ");
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function sanitizeUsername(value) {
+  if (typeof value !== "string") return "";
+  return value.replace(/^@+/, "").trim();
 }
 
 function getInitialTheme(ignoreStoredPreference = false) {
@@ -333,6 +345,7 @@ function getStoredAppState() {
         slug: typeof stream?.slug === "string" ? stream.slug : "",
         title: typeof stream?.title === "string" ? stream.title : "",
       })),
+      username: sanitizeUsername(parsed.u),
       theme: parsed.m === "light" || parsed.m === "dark" ? parsed.m : null,
       language: LANGUAGE_OPTIONS.some((option) => option.id === parsed.l) ? parsed.l : null,
     };
@@ -384,9 +397,9 @@ function GridSVG({ cols, rows, size = 22, className = "" }) {
   );
 }
 
-function encodeState(streams, gridCount, theme, language) {
+function encodeState(streams, gridCount, theme, language, username) {
   try {
-    const d = { g: gridCount, s: streams.map((s) => ({ k: s.slug, t: s.title })), m: theme, l: language };
+    const d = { g: gridCount, s: streams.map((s) => ({ k: s.slug, t: s.title })), m: theme, l: language, u: sanitizeUsername(username) };
     return btoa(unescape(encodeURIComponent(JSON.stringify(d))));
   } catch {
     return "";
@@ -399,6 +412,7 @@ function decodeState(enc) {
     return {
       gridCount: d.g,
       streams: d.s.map((s) => ({ slug: s.k, title: s.t })),
+      username: sanitizeUsername(d.u),
       theme: d.m === "light" || d.m === "dark" ? d.m : null,
       language: LANGUAGE_OPTIONS.some((option) => option.id === d.l) ? d.l : null,
     };
@@ -423,6 +437,7 @@ function getDefaultAppConfig() {
   return {
     theme: getInitialTheme(true),
     language: getInitialLanguage(true),
+    username: DEFAULT_USERNAME,
     gridOption: GRID_OPTIONS[1],
     gridCount: GRID_OPTIONS[1].count,
     streams: DEFAULT_STREAMS.map((stream) => ({ ...stream })),
@@ -446,6 +461,7 @@ function getInitialAppConfig() {
     return {
       theme: baseTheme,
       language: baseLanguage,
+      username: defaultConfig.username,
       gridOption: defaultConfig.gridOption,
       gridCount: defaultConfig.gridCount,
       streams: defaultConfig.streams.map((stream) => ({ ...stream })),
@@ -461,6 +477,7 @@ function getInitialAppConfig() {
   return {
     theme: decoded.theme || baseTheme,
     language: decoded.language || baseLanguage,
+    username: decoded.username || defaultConfig.username,
     gridOption,
     gridCount: gridOption.count,
     streams,
@@ -507,21 +524,9 @@ function getGridMetrics(width, height, cols, rows, gap, preferFullWidth = false)
   };
 }
 
-function getResponsiveGridLayout(option, width) {
+function getFixedGridLayout(option) {
   if (!option) return { cols: 1, rows: 1 };
-
-  let maxCols = option.cols;
-
-  if (width < 640) {
-    maxCols = 1;
-  } else if (width < 1100) {
-    maxCols = Math.min(option.cols, 3);
-  }
-
-  const cols = Math.max(1, Math.min(maxCols, option.count));
-  const rows = Math.ceil(option.count / cols);
-
-  return { cols, rows };
+  return { cols: option.cols, rows: option.rows };
 }
 
 export default function App() {
@@ -529,21 +534,28 @@ export default function App() {
   const initialAppConfig = initialAppConfigRef.current;
   const [theme, setTheme] = useState(initialAppConfig.theme);
   const [language, setLanguage] = useState(initialAppConfig.language);
+  const [username, setUsername] = useState(initialAppConfig.username);
   const [gridOption, setGridOption] = useState(initialAppConfig.gridOption);
   const [streams, setStreams] = useState(initialAppConfig.streams);
   const [showSettings, setShowSettings] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [gridMenuOpen, setGridMenuOpen] = useState(false);
+  const [popups, setPopups] = useState([]);
+  const [popupInteraction, setPopupInteraction] = useState(null);
   const [editStreams, setEditStreams] = useState(() => initialAppConfig.streams.map((stream) => ({ ...stream })));
   const [editGridCount, setEditGridCount] = useState(initialAppConfig.gridCount);
   const [editTheme, setEditTheme] = useState(initialAppConfig.theme);
   const [editLanguage, setEditLanguage] = useState(initialAppConfig.language);
-  const [focusedIdx, setFocusedIdx] = useState(null);
+  const [editUsername, setEditUsername] = useState(initialAppConfig.username);
   const [activeTab, setActiveTab] = useState("streams");
   const [shareUrl, setShareUrl] = useState("");
   const [shareStatus, setShareStatus] = useState("idle");
   const copyTimer = useRef(null);
   const settingsTimerRef = useRef(null);
   const gridAreaRef = useRef(null);
+  const gridMenuRef = useRef(null);
+  const popupIdRef = useRef(1);
+  const popupZIndexRef = useRef(1);
   const [gridAreaSize, setGridAreaSize] = useState(() => ({
     width: typeof window === "undefined" ? 0 : Math.max(window.innerWidth - 24, 0),
     height: typeof window === "undefined" ? 0 : Math.max(window.innerHeight - 160, 0),
@@ -568,9 +580,10 @@ export default function App() {
         s: streams,
         m: theme,
         l: language,
+        u: sanitizeUsername(username),
       })
     );
-  }, [gridOption.count, streams, theme, language]);
+  }, [gridOption.count, streams, theme, language, username]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -584,13 +597,14 @@ export default function App() {
       })),
       gridOption.count,
       theme,
-      language
+      language,
+      username
     );
 
     if (currentCfg !== activeConfig) {
       stripShareConfigFromUrl();
     }
-  }, [gridOption.count, streams, theme, language]);
+  }, [gridOption.count, streams, theme, language, username]);
 
   useEffect(
     () => () => {
@@ -626,118 +640,255 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!gridMenuOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!gridMenuRef.current?.contains(event.target)) {
+        setGridMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setGridMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [gridMenuOpen]);
+
+  useEffect(() => {
+    if (!popupInteraction) return undefined;
+
+    const handlePointerMove = (event) => {
+      if (event.pointerId !== popupInteraction.pointerId) return;
+      if ((event.buttons & 1) !== 1) {
+        setPopupInteraction(null);
+        return;
+      }
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      setPopups((current) =>
+        current.map((popup) => {
+          if (popup.id !== popupInteraction.id) return popup;
+
+          if (popupInteraction.type === "drag") {
+            const nextLeft = clamp(
+              popupInteraction.startLeft + (event.clientX - popupInteraction.startX),
+              0,
+              Math.max(viewportWidth - popup.width, 0)
+            );
+            const nextTop = clamp(
+              popupInteraction.startTop + (event.clientY - popupInteraction.startY),
+              0,
+              Math.max(viewportHeight - popup.height, 0)
+            );
+
+            return {
+              ...popup,
+              left: nextLeft,
+              top: nextTop,
+            };
+          }
+
+          const nextWidth = clamp(
+            popupInteraction.startWidth + (event.clientX - popupInteraction.startX),
+            POPUP_MIN_WIDTH,
+            Math.max(viewportWidth - popup.left, POPUP_MIN_WIDTH)
+          );
+          const nextHeight = clamp(
+            popupInteraction.startHeight + (event.clientY - popupInteraction.startY),
+            POPUP_MIN_HEIGHT,
+            Math.max(viewportHeight - popup.top, POPUP_MIN_HEIGHT)
+          );
+
+          return {
+            ...popup,
+            width: nextWidth,
+            height: nextHeight,
+          };
+        })
+      );
+    };
+
+    const handlePointerUp = (event) => {
+      if (typeof event.pointerId === "number" && event.pointerId !== popupInteraction.pointerId) return;
+      setPopupInteraction(null);
+    };
+
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = popupInteraction.type === "drag" ? "grabbing" : "nwse-resize";
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
+    window.addEventListener("blur", handlePointerUp);
+
+    return () => {
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+      window.removeEventListener("blur", handlePointerUp);
+    };
+  }, [popupInteraction]);
+
   const normalizedStreams = [...streams];
   while (normalizedStreams.length < gridOption.count) {
     normalizedStreams.push({ slug: "", title: "" });
   }
   const activeStreams = normalizedStreams.slice(0, gridOption.count);
+
+  useEffect(() => {
+    const popupEntries = streams
+      .slice(0, gridOption.count)
+      .map((stream, idx) => ({
+        idx,
+        slug: stream.slug.trim(),
+        title: stream.title.trim(),
+      }))
+      .filter((stream) => stream.slug);
+
+    setPopups((current) => {
+      let changed = false;
+
+      const nextPopups = current
+        .map((popup) => {
+          const nextStream = popupEntries.find((stream) => stream.idx === popup.streamIdx);
+          if (!nextStream) {
+            changed = true;
+            return null;
+          }
+
+          if (popup.slug !== nextStream.slug || popup.title !== nextStream.title) {
+            changed = true;
+            return {
+              ...popup,
+              slug: nextStream.slug,
+              title: nextStream.title,
+            };
+          }
+
+          return popup;
+        })
+        .filter(Boolean);
+
+      return changed ? nextPopups : current;
+    });
+  }, [streams, gridOption.count]);
+
   const activeTheme = showSettings ? editTheme : theme;
   const activeLanguage = showSettings ? editLanguage : language;
+  const activeUsername = showSettings ? editUsername : username;
+  const displayUsername = sanitizeUsername(activeUsername) || DEFAULT_USERNAME;
   const isRtl = RTL_LANGUAGES.has(activeLanguage);
   const isLightTheme = activeTheme === "light";
-  const responsiveGrid = getResponsiveGridLayout(gridOption, gridAreaSize.width);
-  const isMobileSingleColumn = gridAreaSize.width < 640 && responsiveGrid.cols === 1;
+  const fixedGrid = getFixedGridLayout(gridOption);
   const gridGap = 0;
-  const availableGridWidth = Math.max(gridAreaSize.width - GRID_SAFE_INSET * 2, 0);
-  const availableGridHeight = Math.max(gridAreaSize.height - GRID_SAFE_INSET * 2, 0);
+  const availableGridWidth = Math.max(gridAreaSize.width, 0);
+  const availableGridHeight = Math.max(gridAreaSize.height, 0);
   const gridMetrics = getGridMetrics(
     availableGridWidth,
     availableGridHeight,
-    responsiveGrid.cols,
-    responsiveGrid.rows,
-    gridGap,
-    isMobileSingleColumn
+    fixedGrid.cols,
+    fixedGrid.rows,
+    gridGap
   );
   const themeStyles = isLightTheme
     ? {
-        root: "bg-slate-100 text-slate-900",
+        root: "bg-[#f9f9f9] text-[#0f0f0f]",
         mesh: "bg-mesh-light",
-        gridPattern: "opacity-40",
-        glowA: "bg-sky-300/30",
-        glowB: "bg-cyan-300/20",
-        glowC: "bg-indigo-300/20",
-        header: "border-slate-200/80 bg-white/72 backdrop-blur-xl",
-        toolbar: "border-slate-200/80 bg-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]",
-        toolbarActive: "bg-slate-900 text-white shadow-lg shadow-slate-300/40",
-        toolbarInactive: "text-slate-600 hover:bg-slate-900/6 hover:text-slate-900",
-        settingsButton: "border-sky-300/40 bg-sky-500/10 text-sky-900 shadow-[0_20px_60px_-36px_rgba(14,165,233,0.45)] hover:bg-sky-500/18",
-        liveBadge: "border-sky-300/35 bg-white/80 text-sky-700 shadow-[0_16px_40px_-28px_rgba(14,165,233,0.35)]",
-        brandKicker: "text-sky-700/75",
-        mainCopy: "text-slate-600",
-        cardDefault: "border-slate-200 bg-white/78 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.28)] hover:border-sky-300/45 hover:shadow-[0_22px_44px_-30px_rgba(14,165,233,0.2)]",
-        cardFocused: "border-sky-400/60 ring-1 ring-sky-300/50 shadow-[0_20px_46px_-28px_rgba(14,165,233,0.34)]",
-        cardTint: "from-sky-200/40 via-white/20 to-cyan-300/10",
-        cardShade: "from-white/5 via-transparent to-slate-100/70",
-        emptyState: "bg-white/75 text-slate-500",
-        emptyIcon: "border-slate-300/70 bg-white/80",
-        indexBadge: "border-slate-200/90 bg-white/85 text-slate-600",
-        selectedBadge: "border-sky-300/40 bg-sky-500/14 text-sky-800",
-        titleKicker: "text-sky-700/80",
-        titleText: "text-slate-900",
-        drawerBackdrop: "bg-slate-900/30 opacity-100 backdrop-blur-sm",
-        drawerPanel: "border-slate-200/80 bg-white/64 backdrop-blur-2xl shadow-2xl shadow-slate-300/30 ring-1 ring-white/60",
-        drawerGradient: "from-white/55 via-slate-50/40 to-slate-100/72",
-        drawerEdge: "from-sky-300/50 via-slate-300/40 to-transparent",
-        drawerHeader: "border-slate-200/80 bg-white/36 backdrop-blur-xl",
-        drawerText: "text-slate-600",
-        closeButton: "border-slate-200/80 bg-white/70 text-slate-600 hover:bg-white hover:text-slate-900",
-        tabActive: "bg-slate-900 text-white shadow-lg shadow-slate-300/35",
-        tabInactive: "bg-white/45 text-slate-600 hover:bg-white/70 hover:text-slate-900",
-        drawerBody: "bg-white/8 backdrop-blur-lg",
-        surface: "border-slate-200/80 bg-white/56 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]",
-        surfaceMuted: "text-slate-600",
-        surfaceInput: "bg-white/78 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white",
-        optionInactive: "border-slate-200/80 bg-white/55 text-slate-700 hover:border-sky-300/40 hover:bg-white/78 hover:text-slate-900",
-        shareUrlBox: "border-slate-200/80 bg-white/70 text-slate-700",
-        footerBar: "border-slate-200/80 bg-white/38 backdrop-blur-xl",
-        secondaryButton: "border-slate-200/80 bg-white/60 text-slate-700 hover:bg-white hover:text-slate-900",
-        primaryButton: "bg-slate-900 text-white hover:bg-sky-700",
-        statusIdle: "bg-slate-900/6 text-slate-600",
+        gridPattern: "hidden",
+        glowA: "hidden",
+        glowB: "hidden",
+        glowC: "hidden",
+        header: "relative z-30 overflow-visible border-b border-black/10 bg-white/95 backdrop-blur-md",
+        toolbar: "border border-black/10 bg-[#f2f2f2] shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]",
+        toolbarActive: "bg-[#0f0f0f] text-white shadow-sm",
+        toolbarInactive: "text-[#0f0f0f] hover:bg-black/5",
+        settingsButton: "border border-[#ff0033] bg-[#ff0033] text-white shadow-[0_16px_30px_-18px_rgba(255,0,51,0.55)] hover:bg-[#e60023]",
+        liveBadge: "bg-[#ff0033] text-white shadow-[0_10px_26px_-16px_rgba(255,0,51,0.55)]",
+        brandKicker: "text-[#606060]",
+        mainCopy: "text-[#606060]",
+        cardDefault: "bg-white",
+        cardTint: "from-black/5 via-transparent to-black/[0.03]",
+        cardShade: "from-transparent via-transparent to-black/30",
+        emptyState: "bg-[#f3f3f3] text-[#606060]",
+        emptyIcon: "border-black/10 bg-white",
+        indexBadge: "border border-black/10 bg-white/92 text-[#606060]",
+        titleKicker: "text-[#606060]",
+        titleText: "text-[#0f0f0f]",
+        drawerBackdrop: "bg-black/45 opacity-100 backdrop-blur-sm",
+        drawerPanel: "border-l border-black/10 bg-white shadow-2xl shadow-black/15",
+        drawerGradient: "from-white via-[#fafafa] to-[#f7f7f7]",
+        drawerEdge: "from-[#ff0033]/30 via-transparent to-transparent",
+        drawerHeader: "border-b border-black/10 bg-white/96 backdrop-blur-md",
+        drawerText: "text-[#606060]",
+        closeButton: "border border-black/10 bg-[#f2f2f2] text-[#0f0f0f] hover:bg-[#e5e5e5]",
+        tabActive: "bg-[#0f0f0f] text-white shadow-sm",
+        tabInactive: "bg-[#f2f2f2] text-[#0f0f0f] hover:bg-[#e5e5e5]",
+        drawerBody: "bg-[#fafafa]",
+        surface: "border border-black/10 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.08)]",
+        surfaceMuted: "text-[#606060]",
+        surfaceInput: "border-black/10 bg-white text-[#0f0f0f] placeholder:text-[#909090] focus:bg-white",
+        optionInactive: "border border-black/10 bg-[#f2f2f2] text-[#0f0f0f] hover:bg-[#e5e5e5]",
+        shareUrlBox: "border border-black/10 bg-[#f9f9f9] text-[#0f0f0f]",
+        footerBar: "border-t border-black/10 bg-white/96",
+        secondaryButton: "border border-black/10 bg-[#f2f2f2] text-[#0f0f0f] hover:bg-[#e5e5e5]",
+        primaryButton: "bg-[#ff0033] text-white hover:bg-[#e60023]",
+        statusIdle: "bg-black/5 text-[#606060]",
       }
     : {
-        root: "bg-slate-950 text-slate-100",
+        root: "bg-[#0f0f0f] text-[#f1f1f1]",
         mesh: "bg-mesh",
-        gridPattern: "opacity-30",
-        glowA: "bg-cyan-400/15",
-        glowB: "bg-sky-500/10",
-        glowC: "bg-blue-500/10",
-        header: "border-white/10 bg-slate-950/75 backdrop-blur-xl",
-        toolbar: "border-white/10 bg-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
-        toolbarActive: "bg-white text-slate-950 shadow-lg shadow-cyan-950/15",
-        toolbarInactive: "text-slate-400 hover:bg-white/10 hover:text-white",
-        settingsButton: "border-cyan-300/20 bg-cyan-400/10 text-cyan-100 shadow-glow hover:bg-cyan-300/20",
-        liveBadge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200 shadow-glow",
-        brandKicker: "text-cyan-200/70",
-        mainCopy: "text-slate-400",
-        cardDefault: "border-white/10 bg-slate-900/80 hover:border-cyan-300/40 hover:shadow-[0_16px_36px_-30px_rgba(15,23,42,0.9)]",
-        cardFocused: "border-cyan-300/70 ring-1 ring-cyan-300/40 shadow-[0_18px_44px_-28px_rgba(34,211,238,0.45)]",
-        cardTint: "from-white/5 via-white/0 to-cyan-300/10",
-        cardShade: "from-slate-950/70 via-transparent to-transparent",
-        emptyState: "bg-slate-900/80 text-slate-500",
-        emptyIcon: "border-white/10 bg-white/5",
-        indexBadge: "border-white/10 bg-slate-950/70 text-slate-300",
-        selectedBadge: "border-cyan-300/20 bg-cyan-300/15 text-cyan-100",
-        titleKicker: "text-cyan-200/70",
-        titleText: "text-white",
-        drawerBackdrop: "bg-slate-950/72 opacity-100 backdrop-blur-md",
-        drawerPanel: "border-white/10 bg-slate-950/62 backdrop-blur-2xl shadow-2xl shadow-cyan-950/30 ring-1 ring-white/10",
-        drawerGradient: "from-slate-900/36 via-slate-950/44 to-slate-950/68",
-        drawerEdge: "from-cyan-300/30 via-white/10 to-transparent",
-        drawerHeader: "border-white/10 bg-slate-950/22 backdrop-blur-xl",
-        drawerText: "text-slate-300",
-        closeButton: "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white",
-        tabActive: "bg-white text-slate-950 shadow-lg shadow-cyan-950/10",
-        tabInactive: "bg-white/10 text-slate-200 hover:bg-white/15 hover:text-white",
-        drawerBody: "bg-slate-950/10 backdrop-blur-lg",
-        surface: "border-white/10 bg-black/25 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]",
-        surfaceMuted: "text-slate-300",
-        surfaceInput: "bg-black/40 border-white/10 text-slate-100 placeholder:text-slate-400 focus:bg-black/55",
-        optionInactive: "border-white/10 bg-white/5 text-slate-200 hover:border-cyan-300/30 hover:bg-white/10 hover:text-white",
-        shareUrlBox: "border-white/10 bg-slate-950/52 text-slate-200",
-        footerBar: "border-white/10 bg-slate-950/28 backdrop-blur-xl",
-        secondaryButton: "border-white/10 bg-white/10 text-slate-200 hover:bg-white/15 hover:text-white",
-        primaryButton: "bg-white text-slate-950 hover:bg-cyan-100",
-        statusIdle: "bg-white/5 text-slate-400",
+        gridPattern: "hidden",
+        glowA: "hidden",
+        glowB: "hidden",
+        glowC: "hidden",
+        header: "relative z-30 overflow-visible border-b border-white/10 bg-[#0f0f0f]/95 backdrop-blur-md",
+        toolbar: "border border-white/10 bg-[#212121]",
+        toolbarActive: "bg-white text-[#0f0f0f] shadow-sm",
+        toolbarInactive: "text-[#f1f1f1] hover:bg-white/8",
+        settingsButton: "border border-[#ff0033] bg-[#ff0033] text-white shadow-[0_16px_30px_-18px_rgba(255,0,51,0.65)] hover:bg-[#e60023]",
+        liveBadge: "bg-[#ff0033] text-white shadow-[0_10px_26px_-16px_rgba(255,0,51,0.6)]",
+        brandKicker: "text-[#aaaaaa]",
+        mainCopy: "text-[#aaaaaa]",
+        cardDefault: "bg-[#212121]",
+        cardTint: "from-white/5 via-transparent to-black/10",
+        cardShade: "from-transparent via-transparent to-black/80",
+        emptyState: "bg-[#212121] text-[#aaaaaa]",
+        emptyIcon: "border-white/10 bg-[#181818]",
+        indexBadge: "border border-white/10 bg-black/35 text-[#f1f1f1]",
+        titleKicker: "text-[#ff9090]",
+        titleText: "text-[#f1f1f1]",
+        drawerBackdrop: "bg-black/70 opacity-100 backdrop-blur-sm",
+        drawerPanel: "border-l border-white/10 bg-[#0f0f0f] shadow-2xl shadow-black/50",
+        drawerGradient: "from-[#181818] via-[#121212] to-[#0f0f0f]",
+        drawerEdge: "from-[#ff0033]/35 via-transparent to-transparent",
+        drawerHeader: "border-white/10 bg-[#181818]/95 backdrop-blur-md",
+        drawerText: "text-[#aaaaaa]",
+        closeButton: "border border-white/10 bg-[#272727] text-[#f1f1f1] hover:bg-[#3a3a3a]",
+        tabActive: "bg-white text-[#0f0f0f] shadow-sm",
+        tabInactive: "bg-[#272727] text-[#f1f1f1] hover:bg-[#3a3a3a]",
+        drawerBody: "bg-[#121212]",
+        surface: "border border-white/10 bg-[#181818] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]",
+        surfaceMuted: "text-[#aaaaaa]",
+        surfaceInput: "border-white/10 bg-[#121212] text-[#f1f1f1] placeholder:text-[#717171] focus:bg-[#121212]",
+        optionInactive: "border border-white/10 bg-[#272727] text-[#f1f1f1] hover:bg-[#3a3a3a]",
+        shareUrlBox: "border border-white/10 bg-[#121212] text-[#f1f1f1]",
+        footerBar: "border-t border-white/10 bg-[#181818]/98",
+        secondaryButton: "border border-white/10 bg-[#272727] text-[#f1f1f1] hover:bg-[#3a3a3a]",
+        primaryButton: "bg-[#ff0033] text-white hover:bg-[#e60023]",
+        statusIdle: "bg-white/8 text-[#aaaaaa]",
       };
 
   const openSettings = () => {
@@ -747,6 +898,8 @@ export default function App() {
     setEditGridCount(gridOption.count);
     setEditTheme(theme);
     setEditLanguage(language);
+    setEditUsername(username);
+    setGridMenuOpen(false);
     setShareUrl("");
     setShareStatus("idle");
     setActiveTab("streams");
@@ -767,7 +920,6 @@ export default function App() {
     const opt = GRID_OPTIONS.find((option) => option.count === count) || GRID_OPTIONS[0];
     setEditGridCount(opt.count);
     setGridOption(opt);
-    setFocusedIdx(null);
   };
 
   const updateTheme = (nextTheme) => {
@@ -778,6 +930,93 @@ export default function App() {
   const updateLanguage = (nextLanguage) => {
     setEditLanguage(nextLanguage);
     setLanguage(nextLanguage);
+  };
+
+  const bringPopupToFront = (id) => {
+    popupZIndexRef.current += 1;
+    const nextZIndex = popupZIndexRef.current;
+
+    setPopups((current) =>
+      current.map((popup) => (
+        popup.id === id
+          ? { ...popup, zIndex: nextZIndex }
+          : popup
+      ))
+    );
+  };
+
+  const openPopup = (stream, streamIdx) => {
+    const slug = stream.slug.trim();
+    if (!slug || typeof window === "undefined") return;
+
+    const existingPopup = popups.find((popup) => popup.streamIdx === streamIdx);
+    if (existingPopup) {
+      bringPopupToFront(existingPopup.id);
+      return;
+    }
+
+    popupZIndexRef.current += 1;
+    const width = clamp(Math.round(window.innerWidth * 0.36), POPUP_MIN_WIDTH, 720);
+    const height = clamp(Math.round(width / VIDEO_RATIO) + 52, POPUP_MIN_HEIGHT, 520);
+    const offset = popups.length * POPUP_OFFSET_STEP;
+
+    setPopups((current) => [
+      ...current,
+      {
+        id: popupIdRef.current++,
+        streamIdx,
+        slug,
+        title: stream.title.trim(),
+        left: clamp(72 + offset, 0, Math.max(window.innerWidth - width, 0)),
+        top: clamp(96 + offset, 0, Math.max(window.innerHeight - height, 0)),
+        width,
+        height,
+        zIndex: popupZIndexRef.current,
+      },
+    ]);
+  };
+
+  const closePopup = (id) => {
+    setPopups((current) => current.filter((popup) => popup.id !== id));
+    setPopupInteraction((current) => (current?.id === id ? null : current));
+  };
+
+  const startPopupDrag = (event, popup) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    bringPopupToFront(popup.id);
+    setPopupInteraction({
+      id: popup.id,
+      pointerId: event.pointerId,
+      type: "drag",
+      startX: event.clientX,
+      startY: event.clientY,
+      startLeft: popup.left,
+      startTop: popup.top,
+    });
+  };
+
+  const startPopupResize = (event, popup) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    bringPopupToFront(popup.id);
+    setPopupInteraction({
+      id: popup.id,
+      pointerId: event.pointerId,
+      type: "resize",
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: popup.width,
+      startHeight: popup.height,
+    });
+  };
+
+  const updateUsername = (nextUsername) => {
+    const sanitized = sanitizeUsername(nextUsername);
+    setEditUsername(sanitized);
+    setUsername(sanitized);
   };
 
   const updateField = (idx, field, val) => {
@@ -792,7 +1031,7 @@ export default function App() {
       slug: stream.slug.trim(),
       title: stream.title.trim(),
     }));
-    const url = window.location.href.split("?")[0] + "?cfg=" + encodeState(validStreams, editGridCount, editTheme, editLanguage);
+    const url = window.location.href.split("?")[0] + "?cfg=" + encodeState(validStreams, editGridCount, editTheme, editLanguage, editUsername);
     setShareUrl(url);
     clearTimeout(copyTimer.current);
 
@@ -820,15 +1059,16 @@ export default function App() {
     window.localStorage.removeItem(LANGUAGE_STORAGE_KEY);
     setTheme(defaults.theme);
     setLanguage(defaults.language);
+    setUsername(defaults.username);
     setGridOption(defaults.gridOption);
     setStreams(defaults.streams.map((stream) => ({ ...stream })));
     setEditTheme(defaults.theme);
     setEditLanguage(defaults.language);
+    setEditUsername(defaults.username);
     setEditGridCount(defaults.gridCount);
     setEditStreams(defaults.streams.map((stream) => ({ ...stream })));
     setShareUrl("");
     setShareStatus("idle");
-    setFocusedIdx(null);
     setActiveTab("streams");
   };
 
@@ -847,42 +1087,106 @@ export default function App() {
 
       <div className="relative flex h-full flex-col overflow-hidden">
         <header className={themeStyles.header}>
-          <div className="flex flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <div className={cn("relative flex h-11 w-11 items-center justify-center rounded-2xl", themeStyles.liveBadge)}>
-                  <div className="absolute h-3 w-3 rounded-full bg-rose-400 animate-pulse-soft" />
-                  <div className="h-3 w-3 rounded-full bg-rose-400" />
+          <div className="flex items-center justify-between gap-5 px-6 py-3">
+            <div className="flex flex-1 items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className={cn("relative flex h-10 w-[60px] items-center justify-center rounded-[14px]", themeStyles.liveBadge)}>
+                  <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+                    <rect width="20" height="14" rx="5" fill="currentColor" opacity="0.16" />
+                    <path d="M8 4.2L13.8 7L8 9.8V4.2Z" fill="white" />
+                  </svg>
                 </div>
                 <div>
-                  <p className={cn("text-xs font-semibold uppercase tracking-[0.35em]", themeStyles.brandKicker)}>
-                    Live Control Deck
+                  <div className="flex items-center gap-2">
+                    <h1 className={cn("text-2xl font-semibold tracking-tight", themeStyles.titleText)}>
+                      MultiTV
+                    </h1>
+                    <span className={cn("rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]", isLightTheme ? "bg-[#ff0033]/10 text-[#ff0033]" : "bg-[#ff0033]/15 text-white")}>
+                      LIVE
+                    </span>
+                  </div>
+                  <p className={cn("mt-1 text-sm", themeStyles.mainCopy)}>
+                    @{displayUsername}
                   </p>
-                  <h1 className={cn("mt-1 text-2xl font-semibold tracking-tight", themeStyles.titleText)}>
-                    MultiTV
-                  </h1>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
-              <div className={cn("inline-flex flex-wrap items-center gap-2 rounded-2xl border p-2", themeStyles.toolbar)}>
-                {GRID_OPTIONS.map((opt) => {
-                  const active = gridOption.count === opt.count;
+            <div className="flex items-center gap-3">
+              <div ref={gridMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setGridMenuOpen((current) => !current)}
+                  className={cn("inline-flex h-11 items-center gap-3 rounded-full px-4 text-sm font-medium transition duration-200", themeStyles.toolbar)}
+                >
+                  <GridSVG cols={gridOption.cols} rows={gridOption.rows} size={18} />
+                  {gridOption.label}
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className={cn("transition duration-200", gridMenuOpen ? "rotate-180" : "")}
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+
+                {gridMenuOpen && (
+                  <div className={cn("absolute right-0 top-full z-[60] mt-2 min-w-[180px] rounded-2xl p-2", themeStyles.surface)}>
+                    {GRID_OPTIONS.map((opt) => {
+                      const active = gridOption.count === opt.count;
+
+                      return (
+                        <button
+                          key={opt.count}
+                          type="button"
+                          onClick={() => {
+                            setGridOption(opt);
+                            setGridMenuOpen(false);
+                          }}
+                          className={cn(
+                            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition duration-200",
+                            active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
+                          )}
+                        >
+                          <GridSVG cols={opt.cols} rows={opt.rows} size={18} />
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className={cn("inline-flex h-11 items-center gap-1 rounded-full p-1", themeStyles.toolbar)}>
+                {THEME_OPTIONS.map((option) => {
+                  const active = activeTheme === option.id;
+                  const isLightOption = option.id === "light";
+
                   return (
                     <button
-                      key={opt.count}
-                      onClick={() => {
-                        setGridOption(opt);
-                        setFocusedIdx(null);
-                      }}
+                      key={option.id}
+                      onClick={() => updateTheme(option.id)}
+                      aria-label={t(`themes.${option.id}`)}
+                      title={t(`themes.${option.id}`)}
                       className={cn(
-                        "inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition duration-200",
+                        "inline-flex h-9 w-9 items-center justify-center rounded-full transition duration-200",
                         active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
                       )}
                     >
-                      <GridSVG cols={opt.cols} rows={opt.rows} size={18} />
-                      {opt.label}
+                      {isLightOption ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="4" />
+                          <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M21 14.2A8.5 8.5 0 0 1 9.8 3a9.2 9.2 0 1 0 11.2 11.2Z" />
+                        </svg>
+                      )}
                     </button>
                   );
                 })}
@@ -890,7 +1194,7 @@ export default function App() {
 
               <button
                 onClick={openSettings}
-                className={cn("inline-flex items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold transition duration-200 hover:-translate-y-0.5", themeStyles.settingsButton)}
+                className={cn("inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition duration-200", themeStyles.settingsButton)}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="3" />
@@ -904,42 +1208,50 @@ export default function App() {
 
         <main
           ref={gridAreaRef}
-          className={cn(
-            "flex-1 min-h-0 p-3 sm:p-4 lg:p-5",
-            isMobileSingleColumn ? "overflow-y-auto overflow-x-hidden" : "overflow-hidden"
-          )}
+          className="flex-1 min-h-0 overflow-auto px-6 py-5"
         >
-          <div
-            className={cn(
-              "mx-auto flex w-full justify-center overflow-visible p-4 sm:p-5",
-              isMobileSingleColumn ? "min-h-full items-start" : "h-full items-center"
-            )}
-          >
+          <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-center overflow-visible">
             <div
               className="grid shrink-0 overflow-visible"
               style={{
                 width: `${gridMetrics.gridWidth}px`,
                 height: `${gridMetrics.gridHeight}px`,
                 gap: `${gridGap}px`,
-                gridTemplateColumns: `repeat(${responsiveGrid.cols}, ${gridMetrics.tileWidth}px)`,
-                gridTemplateRows: `repeat(${responsiveGrid.rows}, ${gridMetrics.tileHeight}px)`,
+                gridTemplateColumns: `repeat(${fixedGrid.cols}, ${gridMetrics.tileWidth}px)`,
+                gridTemplateRows: `repeat(${fixedGrid.rows}, ${gridMetrics.tileHeight}px)`,
               }}
             >
             {activeStreams.map((stream, idx) => {
-              const isFocused = focusedIdx === idx;
-
               return (
-                <button
+                <div
                   key={`${stream.slug}-${idx}`}
-                  type="button"
-                  onClick={() => setFocusedIdx(isFocused ? null : idx)}
                   className={cn(
-                    "group relative isolate h-full w-full min-h-0 overflow-hidden rounded-none text-left transition duration-300",
-                    isFocused ? themeStyles.cardFocused : themeStyles.cardDefault
+                    "group relative isolate h-full w-full min-h-0 overflow-hidden text-left transition duration-300",
+                    themeStyles.cardDefault
                   )}
                 >
                   <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80", themeStyles.cardTint)} />
                   <div className={cn("absolute inset-0 bg-gradient-to-t", themeStyles.cardShade)} />
+                  <div className={cn("absolute left-3 top-3 z-20 inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm", themeStyles.indexBadge)}>
+                    <span className={cn("h-2 w-2 rounded-full", stream.slug ? "bg-[#ff0033]" : isLightTheme ? "bg-black/25" : "bg-white/30")} />
+                    {String(idx + 1).padStart(2, "0")}
+                  </div>
+                  {stream.slug && (
+                    <button
+                      type="button"
+                      onClick={() => openPopup(stream, idx)}
+                      title={t("openPopup")}
+                      aria-label={t("openPopup")}
+                      className={cn("absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full transition", themeStyles.closeButton)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 3h7v7" />
+                        <path d="M10 14L21 3" />
+                        <path d="M21 14v7h-7" />
+                        <path d="M3 10L14 21" />
+                      </svg>
+                    </button>
+                  )}
 
                   {stream.slug ? (
                     <iframe
@@ -952,9 +1264,9 @@ export default function App() {
                   ) : (
                     <div className={cn("relative z-10 flex h-full flex-col items-center justify-center gap-4 px-6 text-center", themeStyles.emptyState)}>
                       <div className={cn("flex h-16 w-16 animate-float items-center justify-center rounded-2xl border border-dashed", themeStyles.emptyIcon)}>
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <rect x="2" y="3" width="20" height="14" rx="2" />
-                          <path d="M8 21h8M12 17v4" />
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                          <rect x="3" y="5" width="18" height="12" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                          <path d="M11 9L15 11L11 13V9Z" fill="currentColor" />
                         </svg>
                       </div>
                       <div>
@@ -968,26 +1280,90 @@ export default function App() {
                     </div>
                   )}
 
-                  {isFocused && (
-                    <div className={cn("pointer-events-none absolute right-4 top-4 z-20 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] backdrop-blur-md", themeStyles.selectedBadge)}>
-                      {t("selected")}
-                    </div>
-                  )}
-
                   {stream.title && (
-                    <div className={cn("pointer-events-none absolute inset-x-0 bottom-0 z-20 translate-y-3 bg-gradient-to-t px-4 pb-4 pt-12 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100", isLightTheme ? "from-white via-white/82 to-transparent" : "from-slate-950 via-slate-950/75 to-transparent")}>
+                    <div className={cn("pointer-events-none absolute inset-x-0 bottom-0 z-20 translate-y-3 bg-gradient-to-t px-4 pb-4 pt-14 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100", isLightTheme ? "from-white via-white/88 to-transparent" : "from-black via-black/86 to-transparent")}>
                       <p className={cn("text-xs font-medium uppercase tracking-[0.22em]", themeStyles.titleKicker)}>
                         {t("liveStream")}
                       </p>
                       <p className={cn("mt-2 text-base font-semibold", themeStyles.titleText)}>{stream.title}</p>
                     </div>
                   )}
-                </button>
+                </div>
               );
             })}
             </div>
           </div>
         </main>
+
+        {popups.length > 0 && (
+          <div className="pointer-events-none fixed inset-0 z-40">
+            {popups.map((popup) => (
+              <div
+                key={popup.id}
+                className={cn("pointer-events-auto absolute flex flex-col overflow-hidden rounded-2xl shadow-2xl", themeStyles.surface)}
+                style={{
+                  left: popup.left,
+                  top: popup.top,
+                  width: popup.width,
+                  height: popup.height,
+                  zIndex: popup.zIndex,
+                }}
+                onPointerDown={() => bringPopupToFront(popup.id)}
+              >
+                <div
+                  className={cn("flex h-12 cursor-move touch-none items-center justify-between gap-3 px-4", themeStyles.toolbar)}
+                  onPointerDown={(event) => startPopupDrag(event, popup)}
+                >
+                  <div className="min-w-0">
+                    <p className={cn("truncate text-sm font-semibold", themeStyles.titleText)}>
+                      {popup.title || t("streamLabel", { index: popup.streamIdx + 1 })}
+                    </p>
+                    <p className={cn("mt-0.5 text-xs", themeStyles.surfaceMuted)}>{t("liveStream")}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => closePopup(popup.id)}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    title={t("closePopup")}
+                    aria-label={t("closePopup")}
+                    className={cn("inline-flex h-9 w-9 items-center justify-center rounded-full transition", themeStyles.closeButton)}
+                  >
+                    <span className="text-lg leading-none">×</span>
+                  </button>
+                </div>
+
+                <div className="relative min-h-0 flex-1 bg-black">
+                  {popupInteraction?.id === popup.id && (
+                    <div className="absolute inset-0 z-10 bg-transparent" />
+                  )}
+
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${popup.slug}?autoplay=1&mute=0`}
+                    className="h-full w-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={popup.title || `Popup Stream ${popup.streamIdx + 1}`}
+                  />
+
+                  <button
+                    type="button"
+                    aria-label="Resize popup"
+                    onPointerDown={(event) => {
+                      event.stopPropagation();
+                      startPopupResize(event, popup);
+                    }}
+                    className="absolute bottom-0 right-0 z-20 h-5 w-5 cursor-se-resize touch-none"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className={cn("ml-auto mt-auto", themeStyles.surfaceMuted)}>
+                      <path d="M6 14L14 6" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M10 14L14 10" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {showSettings && (
           <div className="fixed inset-0 z-50 overflow-hidden">
@@ -1002,32 +1378,41 @@ export default function App() {
             />
 
             <aside
-              className={`absolute inset-y-0 right-0 w-full max-w-3xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              className={`absolute inset-y-0 right-0 w-full max-w-[1040px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 settingsOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
               }`}
             >
-              <div className={cn("relative flex h-full w-full flex-col overflow-hidden sm:rounded-l-[32px]", themeStyles.drawerPanel)}>
+              <div className={cn("relative flex h-full w-full flex-col overflow-hidden rounded-l-[16px]", themeStyles.drawerPanel)}>
                 <div className={cn("absolute inset-0 bg-gradient-to-b", themeStyles.drawerGradient)} />
                 <div className={cn("absolute inset-y-0 left-0 w-px bg-gradient-to-b", themeStyles.drawerEdge)} />
 
-                <div className={cn("relative px-5 pb-5 pt-6 sm:px-7", themeStyles.drawerHeader)}>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <p className={cn("text-xs font-semibold uppercase tracking-[0.35em]", themeStyles.brandKicker)}>
-                        {t("controlCenter")}
-                      </p>
-                      <h2 className={cn("mt-2 text-2xl font-semibold tracking-tight", themeStyles.titleText)}>{t("settingsTitle")}</h2>
-                      <p className={cn("mt-2 max-w-2xl text-sm leading-6", themeStyles.drawerText)}>
-                        {t("settingsDescription")}
-                      </p>
+                <div className={cn("relative px-7 pb-5 pt-6", themeStyles.drawerHeader)}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className={cn("flex h-11 w-[68px] items-center justify-center rounded-[16px]", themeStyles.liveBadge)}>
+                        <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+                          <rect width="20" height="14" rx="5" fill="currentColor" opacity="0.16" />
+                          <path d="M8 4.2L13.8 7L8 9.8V4.2Z" fill="white" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className={cn("text-xs font-semibold uppercase tracking-[0.35em]", themeStyles.brandKicker)}>
+                          {t("controlCenter")}
+                        </p>
+                        <h2 className={cn("mt-2 text-2xl font-semibold tracking-tight", themeStyles.titleText)}>{t("settingsTitle")}</h2>
+                      </div>
                     </div>
-
-                    <button
-                      onClick={closeSettings}
-                      className={cn("inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition", themeStyles.closeButton)}
-                    >
-                      <span className="text-xl leading-none">×</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]", isLightTheme ? "bg-[#ff0033]/10 text-[#ff0033]" : "bg-[#ff0033]/15 text-white")}>
+                        STUDIO
+                      </span>
+                      <button
+                        onClick={closeSettings}
+                        className={cn("inline-flex h-11 w-11 items-center justify-center rounded-full transition", themeStyles.closeButton)}
+                      >
+                        <span className="text-xl leading-none">×</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="mt-6 flex flex-wrap gap-2">
@@ -1048,40 +1433,37 @@ export default function App() {
                     })}
                   </div>
 
-                  <div className={cn("mt-5 flex flex-wrap items-center gap-3 rounded-[24px] border p-4 justify-between", themeStyles.surface)}>
-                    <div className="min-w-[140px]">
-                      <p className={cn("text-sm font-semibold", themeStyles.titleText)}>{t("themeTitle")}</p>
+                  <div className={cn("mt-5 flex flex-wrap items-center gap-3 rounded-[20px] p-4 justify-between", themeStyles.surface)}>
+                    <div className="min-w-[180px]">
+                      <p className={cn("text-sm font-semibold", themeStyles.titleText)}>{t("handleTitle")}</p>
                       <p className={cn("mt-1 text-sm", themeStyles.surfaceMuted)}>
-                        {t("themeDescription")}
+                        {t("handleDescription")}
                       </p>
                     </div>
-                    <div className={cn("inline-flex flex-wrap items-center gap-2 rounded-full border p-1.5", themeStyles.toolbar)}>
-                      {THEME_OPTIONS.map((option) => {
-                        const active = editTheme === option.id;
-                        return (
-                          <button
-                            key={option.id}
-                            onClick={() => updateTheme(option.id)}
-                            className={cn(
-                              "rounded-full px-4 py-2 text-sm font-medium transition",
-                              active ? themeStyles.tabActive : themeStyles.tabInactive
-                            )}
-                          >
-                            {t(`themes.${option.id}`)}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <label className="block min-w-[260px] flex-1">
+                      <span className={cn("mb-2 block text-xs font-semibold uppercase tracking-[0.24em]", themeStyles.surfaceMuted)}>
+                        {t("handleLabel")}
+                      </span>
+                      <div className={cn("flex items-center rounded-2xl border px-4 py-3", themeStyles.surfaceInput)}>
+                        <span className={cn("mr-2 text-sm font-semibold", themeStyles.surfaceMuted)}>@</span>
+                        <input
+                          value={editUsername}
+                          onChange={(e) => updateUsername(e.target.value)}
+                          placeholder={t("handlePlaceholder")}
+                          className="w-full appearance-none bg-transparent text-sm outline-none"
+                        />
+                      </div>
+                    </label>
                   </div>
 
-                  <div className={cn("mt-4 flex flex-wrap items-center gap-3 rounded-[24px] border p-4 justify-between", themeStyles.surface)}>
+                  <div className={cn("mt-4 flex flex-wrap items-center gap-3 rounded-[20px] p-4 justify-between", themeStyles.surface)}>
                     <div className="min-w-[140px]">
                       <p className={cn("text-sm font-semibold", themeStyles.titleText)}>{t("languageTitle")}</p>
                       <p className={cn("mt-1 text-sm", themeStyles.surfaceMuted)}>
                         {t("languageDescription")}
                       </p>
                     </div>
-                    <div className={cn("flex flex-wrap items-center gap-2 rounded-[20px] border p-1.5", themeStyles.toolbar)}>
+                    <div className={cn("flex flex-wrap items-center gap-2 rounded-full p-1.5", themeStyles.toolbar)}>
                       {LANGUAGE_OPTIONS.map((option) => {
                         const active = editLanguage === option.id;
                         return (
@@ -1101,11 +1483,11 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className={cn("relative flex-1 overflow-y-auto px-5 py-5 sm:px-7 sm:py-6", themeStyles.drawerBody)}>
+                <div className={cn("relative z-10 min-h-0 flex-1 overflow-y-auto px-7 py-6", themeStyles.drawerBody)}>
                 {activeTab === "streams" && (
                   <div className="space-y-5">
-                    <div className={cn("rounded-[28px] border p-4 sm:p-5", themeStyles.surface)}>
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className={cn("rounded-[20px] p-5", themeStyles.surface)}>
+                      <div className="flex items-center justify-between gap-4">
                         <div>
                           <p className={cn("text-sm font-semibold", themeStyles.titleText)}>{t("activeSlotCount")}</p>
                           <p className={cn("mt-1 text-sm", themeStyles.surfaceMuted)}>
@@ -1121,7 +1503,7 @@ export default function App() {
                                 onClick={() => updateGridCount(opt.count)}
                                 className={cn(
                                   "rounded-full px-4 py-2 text-sm font-medium transition",
-                                  active ? "bg-cyan-300 text-slate-950" : themeStyles.optionInactive
+                                  active ? themeStyles.primaryButton : themeStyles.optionInactive
                                 )}
                               >
                                 {opt.label}
@@ -1132,14 +1514,14 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+                    <div className="grid grid-cols-2 gap-3">
                       {Array.from({ length: MAX_STREAMS }).map((_, idx) => {
                         const dim = idx >= editGridCount;
 
                         return (
                           <div
                             key={idx}
-                            className={cn("rounded-[24px] border p-4 transition", themeStyles.surface, dim ? "opacity-40" : "opacity-100")}
+                            className={cn("rounded-[20px] p-4 transition", themeStyles.surface, dim ? "opacity-40" : "opacity-100")}
                           >
                             <div className="mb-4 flex items-center justify-between">
                               <div className="flex items-center gap-3">
@@ -1165,7 +1547,7 @@ export default function App() {
                                   onChange={(e) => updateField(idx, "slug", e.target.value)}
                                   placeholder="VideoSlug"
                                   disabled={dim}
-                                  className={cn("w-full appearance-none rounded-2xl border px-4 py-3 font-mono text-sm caret-cyan-200 outline-none transition focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/20 disabled:cursor-not-allowed", themeStyles.surfaceInput)}
+                                  className={cn("w-full appearance-none rounded-2xl border px-4 py-3 font-mono text-sm caret-[#ff0033] outline-none transition focus:border-[#ff0033]/40 focus:ring-2 focus:ring-[#ff0033]/15 disabled:cursor-not-allowed", themeStyles.surfaceInput)}
                                 />
                               </label>
 
@@ -1178,7 +1560,7 @@ export default function App() {
                                   onChange={(e) => updateField(idx, "title", e.target.value)}
                                   placeholder={t("titlePlaceholder")}
                                   disabled={dim}
-                                  className={cn("w-full appearance-none rounded-2xl border px-4 py-3 text-sm caret-cyan-200 outline-none transition focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/20 disabled:cursor-not-allowed", themeStyles.surfaceInput)}
+                                  className={cn("w-full appearance-none rounded-2xl border px-4 py-3 text-sm caret-[#ff0033] outline-none transition focus:border-[#ff0033]/40 focus:ring-2 focus:ring-[#ff0033]/15 disabled:cursor-not-allowed", themeStyles.surfaceInput)}
                                 />
                               </label>
                             </div>
@@ -1187,22 +1569,19 @@ export default function App() {
                       })}
                     </div>
 
-                    <div className={cn("rounded-[24px] border p-4 text-sm leading-6 backdrop-blur-xl", themeStyles.surface, isLightTheme ? "text-slate-700" : "text-slate-200")}>
+                    <div className={cn("rounded-[20px] p-4 text-sm leading-6", themeStyles.surface, isLightTheme ? "text-[#606060]" : "text-[#aaaaaa]")}>
                       <span className={cn("font-semibold", themeStyles.titleText)}>{t("slugHelpTitle")}</span> {t("slugHelpText")}
-                      <span className="mx-1 rounded bg-white/10 px-2 py-1 font-mono text-xs text-cyan-100">
+                      <span className={cn("mx-1 rounded-full px-2.5 py-1 font-mono text-xs", isLightTheme ? "bg-black/5 text-[#0f0f0f]" : "bg-white/10 text-white")}>
                         watch?v=VideoSlug
                       </span>
                       {t("slugHelpText2")}
-                      <span className="ml-1 rounded bg-white/10 px-2 py-1 font-mono text-xs text-cyan-100">
-                        youtube.com/embed/{"{slug}"}
-                      </span>
                     </div>
                   </div>
                 )}
 
                 {activeTab === "share" && (
                   <div className="space-y-5">
-                    <div className={cn("rounded-[28px] border p-5 backdrop-blur-xl", themeStyles.surface)}>
+                    <div className={cn("rounded-[20px] p-5", themeStyles.surface)}>
                       <p className={cn("text-lg font-semibold", themeStyles.titleText)}>{t("shareTitle")}</p>
                       <p className={cn("mt-2 max-w-2xl text-sm leading-6", themeStyles.surfaceMuted)}>
                         {t("shareDescription")}
@@ -1210,7 +1589,7 @@ export default function App() {
 
                       <button
                         onClick={handleShare}
-                        className={cn("mt-5 inline-flex items-center gap-3 rounded-2xl px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5", themeStyles.primaryButton)}
+                        className={cn("mt-5 inline-flex items-center gap-3 rounded-full px-5 py-3 text-sm font-semibold transition", themeStyles.primaryButton)}
                       >
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                           <circle cx="18" cy="5" r="3" />
@@ -1224,7 +1603,7 @@ export default function App() {
                     </div>
 
                     {shareUrl && (
-                      <div className={cn("rounded-[28px] border p-5 backdrop-blur-xl", themeStyles.surface)}>
+                      <div className={cn("rounded-[20px] p-5", themeStyles.surface)}>
                         <p className={cn("text-xs font-semibold uppercase tracking-[0.28em]", themeStyles.surfaceMuted)}>
                           {t("generatedUrl")}
                         </p>
@@ -1279,23 +1658,23 @@ export default function App() {
                       </div>
                     )}
 
-                    <div className={cn("rounded-[24px] border p-4 text-sm leading-6 backdrop-blur-xl", themeStyles.surface, isLightTheme ? "text-amber-900" : "text-amber-100/85")}>
+                    <div className={cn("rounded-[20px] p-4 text-sm leading-6", themeStyles.surface, isLightTheme ? "text-[#7c2d12]" : "text-[#f5c2a8]")}>
                       {t("shareHint")}
                     </div>
                   </div>
                 )}
                 </div>
 
-                <div className={cn("flex flex-col-reverse gap-3 px-5 py-4 sm:flex-row sm:justify-end sm:px-7", themeStyles.footerBar)}>
+                <div className={cn("relative z-10 shrink-0 flex justify-end gap-3 px-7 py-4", themeStyles.footerBar)}>
                   <button
                     onClick={handleReset}
-                    className={cn("rounded-2xl border px-5 py-3 text-sm font-semibold transition", themeStyles.secondaryButton)}
+                    className={cn("rounded-full px-5 py-3 text-sm font-semibold transition", themeStyles.secondaryButton)}
                   >
                     {t("reset")}
                   </button>
                   <button
                     onClick={closeSettings}
-                    className={cn("rounded-2xl border px-5 py-3 text-sm font-semibold transition", themeStyles.secondaryButton)}
+                    className={cn("rounded-full px-5 py-3 text-sm font-semibold transition", themeStyles.primaryButton)}
                   >
                     {t("closeSettings")}
                   </button>
