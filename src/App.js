@@ -10,13 +10,43 @@ const DEFAULT_STREAMS = [
 ];
 
 const GRID_OPTIONS = [
-  { count: 4, cols: 2, rows: 2, label: "2×2" },
-  { count: 6, cols: 3, rows: 2, label: "3×2" },
-  { count: 9, cols: 3, rows: 3, label: "3×3" },
-  { count: 12, cols: 4, rows: 3, label: "4×3" },
-  { count: 24, cols: 6, rows: 4, label: "6×4" },
+  {
+    id: "featured-6",
+    count: 6,
+    cols: 3,
+    rows: 3,
+    label: "1+5",
+    cells: [
+      { col: 1, row: 1, colSpan: 2, rowSpan: 2 },
+      { col: 3, row: 1 },
+      { col: 3, row: 2 },
+      { col: 1, row: 3 },
+      { col: 2, row: 3 },
+      { col: 3, row: 3 },
+    ],
+  },
+  {
+    id: "featured-5",
+    count: 5,
+    cols: 6,
+    rows: 5,
+    label: "2+3",
+    cells: [
+      { col: 1, row: 1, colSpan: 3, rowSpan: 3 },
+      { col: 4, row: 1, colSpan: 3, rowSpan: 3 },
+      { col: 1, row: 4, colSpan: 2, rowSpan: 2 },
+      { col: 3, row: 4, colSpan: 2, rowSpan: 2 },
+      { col: 5, row: 4, colSpan: 2, rowSpan: 2 },
+    ],
+  },
+  { id: "grid-2x2", count: 4, cols: 2, rows: 2, label: "2×2" },
+  { id: "grid-3x2", count: 6, cols: 3, rows: 2, label: "3×2" },
+  { id: "grid-3x3", count: 9, cols: 3, rows: 3, label: "3×3" },
+  { id: "grid-4x3", count: 12, cols: 4, rows: 3, label: "4×3" },
+  { id: "grid-6x4", count: 24, cols: 6, rows: 4, label: "6×4" },
 ];
 
+const DEFAULT_GRID_OPTION = GRID_OPTIONS.find((option) => option.id === "featured-6");
 const MAX_STREAMS = Math.max(...GRID_OPTIONS.map((option) => option.count));
 
 const SETTINGS_TABS = ["streams", "share"];
@@ -40,7 +70,8 @@ const SETTINGS_TRANSITION_MS = 320;
 const APP_STATE_STORAGE_KEY = "multi-tv-state";
 const THEME_STORAGE_KEY = "multi-tv-theme";
 const LANGUAGE_STORAGE_KEY = "multi-tv-language";
-const ANNOUNCEMENT_STORAGE_KEY = "multi-tv-announcement-seen";
+const SETTINGS_RESET_STORAGE_KEY = "multi-tv-settings-reset-v1";
+const ANNOUNCEMENT_STORAGE_KEY = "multi-tv-announcement-seen-v2";
 const RTL_LANGUAGES = new Set(["ar"]);
 const DEFAULT_USERNAME = "username";
 const POPUP_MIN_WIDTH = 360;
@@ -52,6 +83,8 @@ const TRANSLATIONS = {
     tabs: { streams: "Yayınlar", share: "Paylaş" },
     themes: { dark: "Koyu", light: "Açık" },
     settingsButton: "Ayarlar",
+    hideHeader: "Header'ı gizle",
+    showHeader: "Header'ı göster",
     controlCenter: "Kontrol Merkezi",
     settingsTitle: "Ayarlar",
     handleTitle: "Kullanıcı adı",
@@ -75,7 +108,11 @@ const TRANSLATIONS = {
     noViewersText: "şu an online değil!",
     announcementKicker: "Yenilik",
     announcementTitle: "MultiTV yenilendi",
-    announcementDescription: "Username ile Kick entegrasyonu eklendi. Artık kullanıcı adını girerek canlı durumu, avatar ve izleyici bilgisini arayüzde görebilirsin. Yayınları sürükle bırak ile sıralama özelliği de eklendi.",
+    announcementDescription: [
+      "Header gizleme seçeneği eklendi.",
+      "1+5 ve 2+3 ızgara seçeneği eklendi.",
+      "Yayınlar ekrana daha geniş oturacak şekilde ayarlandı.",
+    ],
     announcementPrimary: "Tamam",
     dragStream: "Yayını sırala",
     slugHelpTitle: "Slug nasıl bulunur?",
@@ -99,6 +136,8 @@ const TRANSLATIONS = {
     tabs: { streams: "Streams", share: "Share" },
     themes: { dark: "Dark", light: "Light" },
     settingsButton: "Settings",
+    hideHeader: "Hide header",
+    showHeader: "Show header",
     controlCenter: "Control Center",
     settingsTitle: "Settings",
     handleTitle: "Username",
@@ -122,7 +161,11 @@ const TRANSLATIONS = {
     noViewersText: "is not online right now!",
     announcementKicker: "Update",
     announcementTitle: "MultiTV has been refreshed",
-    announcementDescription: "Kick integration with username support has been added. Enter a username to see live status, avatar, and viewer details in the interface. You can also reorder streams with drag and drop.",
+    announcementDescription: [
+      "A header hide option has been added.",
+      "1+5 and 2+3 grid options have been added.",
+      "Streams now fit the screen more broadly.",
+    ],
     announcementPrimary: "Got it",
     dragStream: "Reorder stream",
     slugHelpTitle: "How to find the slug?",
@@ -146,6 +189,8 @@ const TRANSLATIONS = {
     tabs: { streams: "Streams", share: "Teilen" },
     themes: { dark: "Dunkel", light: "Hell" },
     settingsButton: "Einstellungen",
+    hideHeader: "Header ausblenden",
+    showHeader: "Header anzeigen",
     controlCenter: "Kontrollzentrum",
     settingsTitle: "Einstellungen",
     handleTitle: "Benutzername",
@@ -169,7 +214,11 @@ const TRANSLATIONS = {
     noViewersText: "ist gerade nicht online!",
     announcementKicker: "Update",
     announcementTitle: "MultiTV wurde erneuert",
-    announcementDescription: "Die Kick-Integration per Benutzername wurde hinzugefuegt. Gib einen Benutzernamen ein, um Live-Status, Avatar und Zuschauerzahl in der Oberflaeche zu sehen. Streams koennen jetzt auch per Drag-and-drop sortiert werden.",
+    announcementDescription: [
+      "Eine Option zum Ausblenden des Headers wurde hinzugefuegt.",
+      "Die Rasteroptionen 1+5 und 2+3 wurden hinzugefuegt.",
+      "Streams fuellen den Bildschirm jetzt besser aus.",
+    ],
     announcementPrimary: "Verstanden",
     dragStream: "Stream sortieren",
     slugHelpTitle: "Wie findet man den Slug?",
@@ -193,6 +242,8 @@ const TRANSLATIONS = {
     tabs: { streams: "Flux", share: "Partager" },
     themes: { dark: "Sombre", light: "Clair" },
     settingsButton: "Parametres",
+    hideHeader: "Masquer l'en-tete",
+    showHeader: "Afficher l'en-tete",
     controlCenter: "Centre de controle",
     settingsTitle: "Parametres",
     handleTitle: "Nom d'utilisateur",
@@ -216,7 +267,11 @@ const TRANSLATIONS = {
     noViewersText: "n'est pas en ligne actuellement !",
     announcementKicker: "Nouveaute",
     announcementTitle: "MultiTV a ete mis a jour",
-    announcementDescription: "L'integration Kick avec nom d'utilisateur a ete ajoutee. Saisissez un nom d'utilisateur pour voir le statut en direct, l'avatar et le nombre de spectateurs dans l'interface. Vous pouvez aussi reordonner les flux par glisser-deposer.",
+    announcementDescription: [
+      "Une option permettant de masquer l'en-tete a ete ajoutee.",
+      "Les grilles 1+5 et 2+3 ont ete ajoutees.",
+      "Les flux occupent maintenant davantage l'ecran.",
+    ],
     announcementPrimary: "Compris",
     dragStream: "Reordonner le flux",
     slugHelpTitle: "Comment trouver le slug ?",
@@ -240,6 +295,8 @@ const TRANSLATIONS = {
     tabs: { streams: "直播源", share: "分享" },
     themes: { dark: "深色", light: "浅色" },
     settingsButton: "设置",
+    hideHeader: "隐藏标题栏",
+    showHeader: "显示标题栏",
     controlCenter: "控制中心",
     settingsTitle: "设置",
     handleTitle: "用户名",
@@ -263,7 +320,11 @@ const TRANSLATIONS = {
     noViewersText: "当前不在线！",
     announcementKicker: "更新",
     announcementTitle: "MultiTV 已更新",
-    announcementDescription: "已加入通过用户名连接 Kick 的功能。输入用户名后，可在界面中查看直播状态、头像和观看人数。现在也可以通过拖放重新排序直播。",
+    announcementDescription: [
+      "新增了隐藏标题栏选项。",
+      "新增了 1+5 和 2+3 网格选项。",
+      "直播画面现在可以更充分地填充屏幕。",
+    ],
     announcementPrimary: "知道了",
     dragStream: "重新排序直播",
     slugHelpTitle: "如何找到 slug？",
@@ -287,6 +348,8 @@ const TRANSLATIONS = {
     tabs: { streams: "البثوث", share: "مشاركة" },
     themes: { dark: "داكن", light: "فاتح" },
     settingsButton: "الإعدادات",
+    hideHeader: "إخفاء الرأس",
+    showHeader: "إظهار الرأس",
     controlCenter: "مركز التحكم",
     settingsTitle: "الإعدادات",
     handleTitle: "اسم المستخدم",
@@ -310,7 +373,11 @@ const TRANSLATIONS = {
     noViewersText: "ليس متصلا الآن!",
     announcementKicker: "تحديث",
     announcementTitle: "تم تحديث MultiTV",
-    announcementDescription: "تمت إضافة تكامل Kick باستخدام اسم المستخدم. أدخل اسم المستخدم لعرض حالة البث والصورة الرمزية وعدد المشاهدين داخل الواجهة. يمكنك الآن أيضا إعادة ترتيب البثوث بالسحب والإفلات.",
+    announcementDescription: [
+      "تمت إضافة خيار إخفاء الرأس.",
+      "تمت إضافة خياري الشبكة 1+5 و2+3.",
+      "تم ضبط البثوث لتملأ الشاشة بشكل أفضل.",
+    ],
     announcementPrimary: "حسنا",
     dragStream: "إعادة ترتيب البث",
     slugHelpTitle: "كيف تجد الـ slug؟",
@@ -377,6 +444,16 @@ function getInitialAnnouncementVisibility() {
   return window.localStorage.getItem(ANNOUNCEMENT_STORAGE_KEY) !== "true";
 }
 
+function resetStoredSettingsOnce() {
+  if (typeof window === "undefined") return;
+  if (window.localStorage.getItem(SETTINGS_RESET_STORAGE_KEY) === "true") return;
+
+  window.localStorage.removeItem(APP_STATE_STORAGE_KEY);
+  window.localStorage.removeItem(THEME_STORAGE_KEY);
+  window.localStorage.removeItem(LANGUAGE_STORAGE_KEY);
+  window.localStorage.setItem(SETTINGS_RESET_STORAGE_KEY, "true");
+}
+
 function getStoredAppState() {
   if (typeof window === "undefined") return null;
 
@@ -388,7 +465,8 @@ function getStoredAppState() {
     if (!Array.isArray(parsed.s)) return null;
 
     return {
-      gridCount: GRID_OPTIONS.some((option) => option.count === parsed.g) ? parsed.g : GRID_OPTIONS[1].count,
+      gridCount: GRID_OPTIONS.some((option) => option.count === parsed.g) ? parsed.g : DEFAULT_GRID_OPTION.count,
+      gridOptionId: typeof parsed.o === "string" ? parsed.o : null,
       streams: parsed.s.map((stream) => ({
         slug: typeof stream?.slug === "string" ? stream.slug : "",
         title: typeof stream?.title === "string" ? stream.title : "",
@@ -396,6 +474,7 @@ function getStoredAppState() {
       username: sanitizeUsername(parsed.u),
       theme: parsed.m === "light" || parsed.m === "dark" ? parsed.m : null,
       language: LANGUAGE_OPTIONS.some((option) => option.id === parsed.l) ? parsed.l : null,
+      headerVisible: parsed.h !== false,
     };
   } catch {
     return null;
@@ -414,10 +493,14 @@ function translate(language, key, params = {}) {
     : value;
 }
 
-function GridSVG({ cols, rows, size = 22, className = "" }) {
+function GridSVG({ cols, rows, cells, size = 22, className = "" }) {
   const gap = 2.5;
   const cellW = (size - gap * (cols - 1)) / cols;
   const cellH = (size - gap * (rows - 1)) / rows;
+  const previewCells = cells || Array.from({ length: rows * cols }).map((_, i) => ({
+    col: (i % cols) + 1,
+    row: Math.floor(i / cols) + 1,
+  }));
   return (
     <svg
       width={size}
@@ -426,16 +509,18 @@ function GridSVG({ cols, rows, size = 22, className = "" }) {
       className={className}
       style={{ display: "block" }}
     >
-      {Array.from({ length: rows * cols }).map((_, i) => {
-        const r = Math.floor(i / cols);
-        const c = i % cols;
+      {previewCells.map((cell, i) => {
+        const r = cell.row - 1;
+        const c = cell.col - 1;
+        const colSpan = cell.colSpan || 1;
+        const rowSpan = cell.rowSpan || 1;
         return (
           <rect
             key={i}
             x={c * (cellW + gap)}
             y={r * (cellH + gap)}
-            width={cellW}
-            height={cellH}
+            width={cellW * colSpan + gap * (colSpan - 1)}
+            height={cellH * rowSpan + gap * (rowSpan - 1)}
             rx={1}
             fill="currentColor"
           />
@@ -445,9 +530,9 @@ function GridSVG({ cols, rows, size = 22, className = "" }) {
   );
 }
 
-function encodeState(streams, gridCount, theme, language, username) {
+function encodeState(streams, gridOption, theme, language, username, headerVisible) {
   try {
-    const d = { g: gridCount, s: streams.map((s) => ({ k: s.slug, t: s.title })), m: theme, l: language, u: sanitizeUsername(username) };
+    const d = { g: gridOption.count, o: gridOption.id, s: streams.map((s) => ({ k: s.slug, t: s.title })), m: theme, l: language, u: sanitizeUsername(username), h: headerVisible };
     return btoa(unescape(encodeURIComponent(JSON.stringify(d))));
   } catch {
     return "";
@@ -459,10 +544,12 @@ function decodeState(enc) {
     const d = JSON.parse(decodeURIComponent(escape(atob(enc))));
     return {
       gridCount: d.g,
+      gridOptionId: typeof d.o === "string" ? d.o : null,
       streams: d.s.map((s) => ({ slug: s.k, title: s.t })),
       username: sanitizeUsername(d.u),
       theme: d.m === "light" || d.m === "dark" ? d.m : null,
       language: LANGUAGE_OPTIONS.some((option) => option.id === d.l) ? d.l : null,
+      headerVisible: d.h !== false,
     };
   } catch {
     return null;
@@ -486,13 +573,16 @@ function getDefaultAppConfig() {
     theme: getInitialTheme(true),
     language: getInitialLanguage(true),
     username: DEFAULT_USERNAME,
-    gridOption: GRID_OPTIONS[1],
-    gridCount: GRID_OPTIONS[1].count,
+    headerVisible: true,
+    gridOption: DEFAULT_GRID_OPTION,
+    gridCount: DEFAULT_GRID_OPTION.count,
     streams: DEFAULT_STREAMS.map((stream) => ({ ...stream })),
   };
 }
 
 function getInitialAppConfig() {
+  resetStoredSettingsOnce();
+
   const defaultConfig = getDefaultAppConfig();
   const baseTheme = getInitialTheme();
   const baseLanguage = getInitialLanguage();
@@ -510,13 +600,16 @@ function getInitialAppConfig() {
       theme: baseTheme,
       language: baseLanguage,
       username: defaultConfig.username,
+      headerVisible: defaultConfig.headerVisible,
       gridOption: defaultConfig.gridOption,
       gridCount: defaultConfig.gridCount,
       streams: defaultConfig.streams.map((stream) => ({ ...stream })),
     };
   }
 
-  const gridOption = GRID_OPTIONS.find((option) => option.count === decoded.gridCount) || GRID_OPTIONS[1];
+  const gridOption = GRID_OPTIONS.find((option) => option.id === decoded.gridOptionId)
+    || GRID_OPTIONS.find((option) => option.count === decoded.gridCount && !option.cells)
+    || DEFAULT_GRID_OPTION;
   const streams = decoded.streams.map((stream) => ({
     slug: typeof stream?.slug === "string" ? stream.slug : "",
     title: typeof stream?.title === "string" ? stream.title : "",
@@ -526,20 +619,21 @@ function getInitialAppConfig() {
     theme: decoded.theme || baseTheme,
     language: decoded.language || baseLanguage,
     username: decoded.username || defaultConfig.username,
+    headerVisible: decoded.headerVisible,
     gridOption,
     gridCount: gridOption.count,
     streams,
   };
 }
 
-function getGridMetrics(width, height, cols, rows, gap, preferFullWidth = false) {
+function getGridMetrics(width, height, cols, rows, gap, fillAvailableSpace = false) {
   if (!width || !height) {
     return { tileWidth: 0, tileHeight: 0, gridWidth: 0, gridHeight: 0 };
   }
 
-  if (preferFullWidth) {
-    const tileWidth = width;
-    const tileHeight = tileWidth / VIDEO_RATIO;
+  if (fillAvailableSpace) {
+    const tileWidth = (width - gap * (cols - 1)) / cols;
+    const tileHeight = (height - gap * (rows - 1)) / rows;
 
     return {
       tileWidth,
@@ -575,6 +669,16 @@ function getGridMetrics(width, height, cols, rows, gap, preferFullWidth = false)
 function getFixedGridLayout(option) {
   if (!option) return { cols: 1, rows: 1 };
   return { cols: option.cols, rows: option.rows };
+}
+
+function getGridCellStyle(option, index) {
+  const cell = option?.cells?.[index];
+  if (!cell) return undefined;
+
+  return {
+    gridColumn: `${cell.col} / span ${cell.colSpan || 1}`,
+    gridRow: `${cell.row} / span ${cell.rowSpan || 1}`,
+  };
 }
 
 function reorderStreams(list, fromIndex, toIndex, activeCount) {
@@ -615,10 +719,12 @@ export default function App() {
   const [showAnnouncement, setShowAnnouncement] = useState(getInitialAnnouncementVisibility);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [gridMenuOpen, setGridMenuOpen] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(initialAppConfig.headerVisible);
   const [popups, setPopups] = useState([]);
   const [popupInteraction, setPopupInteraction] = useState(null);
   const [editStreams, setEditStreams] = useState(() => initialAppConfig.streams.map((stream) => ({ ...stream })));
   const [editGridCount, setEditGridCount] = useState(initialAppConfig.gridCount);
+  const [editGridOptionId, setEditGridOptionId] = useState(initialAppConfig.gridOption.id);
   const [editTheme, setEditTheme] = useState(initialAppConfig.theme);
   const [editLanguage, setEditLanguage] = useState(initialAppConfig.language);
   const [editUsername, setEditUsername] = useState(initialAppConfig.username);
@@ -658,13 +764,15 @@ export default function App() {
       APP_STATE_STORAGE_KEY,
       JSON.stringify({
         g: gridOption.count,
+        o: gridOption.id,
         s: streams,
         m: theme,
         l: language,
         u: sanitizeUsername(username),
+        h: headerVisible,
       })
     );
-  }, [gridOption.count, streams, theme, language, username]);
+  }, [gridOption, streams, theme, language, username, headerVisible]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -676,16 +784,17 @@ export default function App() {
         slug: stream.slug.trim(),
         title: stream.title.trim(),
       })),
-      gridOption.count,
+      gridOption,
       theme,
       language,
-      username
+      username,
+      headerVisible
     );
 
     if (currentCfg !== activeConfig) {
       stripShareConfigFromUrl();
     }
-  }, [gridOption.count, streams, theme, language, username]);
+  }, [gridOption, streams, theme, language, username, headerVisible]);
 
   useEffect(
     () => () => {
@@ -882,7 +991,8 @@ export default function App() {
     availableGridHeight,
     fixedGrid.cols,
     fixedGrid.rows,
-    gridGap
+    gridGap,
+    !headerVisible
   );
   const themeStyles = isLightTheme
     ? {
@@ -977,6 +1087,7 @@ export default function App() {
     while (padded.length < MAX_STREAMS) padded.push({ slug: "", title: "" });
     setEditStreams(padded);
     setEditGridCount(gridOption.count);
+    setEditGridOptionId(gridOption.id);
     setEditTheme(theme);
     setEditLanguage(language);
     setEditUsername(username);
@@ -1002,9 +1113,10 @@ export default function App() {
     }, SETTINGS_TRANSITION_MS);
   };
 
-  const updateGridCount = (count) => {
-    const opt = GRID_OPTIONS.find((option) => option.count === count) || GRID_OPTIONS[0];
+  const updateGridOption = (optionId) => {
+    const opt = GRID_OPTIONS.find((option) => option.id === optionId) || GRID_OPTIONS[0];
     setEditGridCount(opt.count);
+    setEditGridOptionId(opt.id);
     setGridOption(opt);
   };
 
@@ -1208,7 +1320,8 @@ export default function App() {
       slug: stream.slug.trim(),
       title: stream.title.trim(),
     }));
-    const url = window.location.href.split("?")[0] + "?cfg=" + encodeState(validStreams, editGridCount, editTheme, editLanguage, editUsername);
+    const editGridOption = GRID_OPTIONS.find((option) => option.id === editGridOptionId) || GRID_OPTIONS[0];
+    const url = window.location.href.split("?")[0] + "?cfg=" + encodeState(validStreams, editGridOption, editTheme, editLanguage, editUsername, headerVisible);
     setShareUrl(url);
     clearTimeout(copyTimer.current);
 
@@ -1237,12 +1350,14 @@ export default function App() {
     setTheme(defaults.theme);
     setLanguage(defaults.language);
     setUsername(defaults.username);
+    setHeaderVisible(defaults.headerVisible);
     setGridOption(defaults.gridOption);
     setStreams(defaults.streams.map((stream) => ({ ...stream })));
     setEditTheme(defaults.theme);
     setEditLanguage(defaults.language);
     setEditUsername(defaults.username);
     setEditGridCount(defaults.gridCount);
+    setEditGridOptionId(defaults.gridOption.id);
     setEditStreams(defaults.streams.map((stream) => ({ ...stream })));
     setShareUrl("");
     setShareStatus("idle");
@@ -1263,6 +1378,26 @@ export default function App() {
       <div className={cn("absolute bottom-0 left-1/3 h-80 w-80 rounded-full blur-3xl", themeStyles.glowC)} />
 
       <div className="relative flex h-full flex-col overflow-hidden">
+        {!headerVisible && (
+          <div className="group absolute right-3 top-3 z-40">
+            <button
+              type="button"
+              onClick={() => setHeaderVisible(true)}
+              aria-label={t("showHeader")}
+              className={cn("inline-flex h-10 w-10 items-center justify-center rounded-full transition duration-200", themeStyles.toolbar)}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="6" rx="1" />
+                <path d="m8 15 4 4 4-4" />
+              </svg>
+            </button>
+            <span className={cn("pointer-events-none absolute right-full top-1/2 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium opacity-0 shadow-lg transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100", themeStyles.surface)}>
+              {t("showHeader")}
+            </span>
+          </div>
+        )}
+
+        {headerVisible && (
         <header className={themeStyles.header}>
           <div className="flex items-center justify-between gap-5 px-6 py-3">
             <div className="flex flex-1 items-center gap-4">
@@ -1297,13 +1432,30 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-3">
+              <div className="group relative">
+                <button
+                  type="button"
+                  onClick={() => setHeaderVisible(false)}
+                  aria-label={t("hideHeader")}
+                  className={cn("inline-flex h-11 w-11 items-center justify-center rounded-full transition duration-200", themeStyles.toolbar)}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="6" rx="1" />
+                    <path d="m8 19 4-4 4 4" />
+                  </svg>
+                </button>
+                <span className={cn("pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium opacity-0 shadow-lg transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100", themeStyles.surface)}>
+                  {t("hideHeader")}
+                </span>
+              </div>
+
               <div ref={gridMenuRef} className="relative">
                 <button
                   type="button"
                   onClick={() => setGridMenuOpen((current) => !current)}
                   className={cn("inline-flex h-11 items-center gap-3 rounded-full px-4 text-sm font-medium transition duration-200", themeStyles.toolbar)}
                 >
-                  <GridSVG cols={gridOption.cols} rows={gridOption.rows} size={18} />
+                  <GridSVG cols={gridOption.cols} rows={gridOption.rows} cells={gridOption.cells} size={18} />
                   {gridOption.label}
                   <svg
                     width="16"
@@ -1321,11 +1473,11 @@ export default function App() {
                 {gridMenuOpen && (
                   <div className={cn("absolute right-0 top-full z-[60] mt-2 min-w-[180px] rounded-2xl p-2", themeStyles.surface)}>
                     {GRID_OPTIONS.map((opt) => {
-                      const active = gridOption.count === opt.count;
+                      const active = gridOption.id === opt.id;
 
                       return (
                         <button
-                          key={opt.count}
+                          key={opt.id}
                           type="button"
                           onClick={() => {
                             setGridOption(opt);
@@ -1336,7 +1488,7 @@ export default function App() {
                             active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
                           )}
                         >
-                          <GridSVG cols={opt.cols} rows={opt.rows} size={18} />
+                          <GridSVG cols={opt.cols} rows={opt.rows} cells={opt.cells} size={18} />
                           {opt.label}
                         </button>
                       );
@@ -1389,12 +1541,13 @@ export default function App() {
             </div>
           </div>
         </header>
+        )}
 
         <main
           ref={gridAreaRef}
-          className="flex-1 min-h-0 overflow-auto px-6 py-5"
+          className={cn("flex-1 min-h-0 overflow-auto", headerVisible ? "px-6 py-5" : "p-0")}
         >
-          <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-center overflow-visible">
+          <div className={cn("mx-auto flex h-full w-full items-center justify-center overflow-visible", headerVisible ? "max-w-[1760px]" : "")}>
             <div
               className="grid shrink-0 overflow-visible"
               style={{
@@ -1424,6 +1577,7 @@ export default function App() {
                       draggedStreamIndex === idx ? "opacity-60" : "",
                       themeStyles.cardDefault
                     )}
+                    style={getGridCellStyle(gridOption, idx)}
                   >
                     <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80", themeStyles.cardTint)} />
                     <div className={cn("absolute inset-0 bg-gradient-to-t", themeStyles.cardShade)} />
@@ -1629,9 +1783,11 @@ export default function App() {
                 <h2 id="announcement-title" className={cn("mt-2 text-2xl font-semibold tracking-tight", themeStyles.titleText)}>
                   {t("announcementTitle")}
                 </h2>
-                <p className={cn("mt-3 text-sm leading-6", themeStyles.surfaceMuted)}>
-                  {t("announcementDescription")}
-                </p>
+                <ul className={cn("mt-3 list-disc space-y-1 pl-5 text-sm leading-6", themeStyles.surfaceMuted)}>
+                  {t("announcementDescription").map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
 
                 <button
                   type="button"
@@ -1775,11 +1931,11 @@ export default function App() {
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {GRID_OPTIONS.map((opt) => {
-                              const active = editGridCount === opt.count;
+                              const active = editGridOptionId === opt.id;
                               return (
                                 <button
-                                  key={opt.count}
-                                  onClick={() => updateGridCount(opt.count)}
+                                  key={opt.id}
+                                  onClick={() => updateGridOption(opt.id)}
                                   className={cn(
                                     "rounded-full px-4 py-2 text-sm font-medium transition",
                                     active ? themeStyles.primaryButton : themeStyles.optionInactive
