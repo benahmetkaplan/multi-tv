@@ -1283,7 +1283,7 @@ export default function App() {
     }
 
     const controller = new AbortController();
-    const url = `https://multi-tv.ahmetkaplan.org/kick.php?user=${encodeURIComponent(sanitized)}`;
+    const url = `https://kickwidget.com/api/user-info?user=${encodeURIComponent(sanitized)}`;
 
     fetch(url, { signal: controller.signal })
       .then((res) => res.json())
