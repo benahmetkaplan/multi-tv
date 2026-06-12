@@ -5,7 +5,7 @@ const DEFAULT_STREAMS = [
   { slug: "6N8_r2uwLEc", title: "CNN Türk" },
   { slug: "ztmY_cCtUl0", title: "Sözcü TV" },
   { slug: "RNVNlJSUFoE", title: "Habertürk" },
-  { slug: "8uNelFh0oz4", title: "Halk TV" },
+  { slug: "jHMsvYrf-UA", title: "Halk TV" },
   { slug: "EqoCJ8BPxtE", title: "Haber Global" }
 ];
 
@@ -749,6 +749,15 @@ export default function App() {
   }));
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const searchUsername = params.get("username");
+
+    if (searchUsername) {
+      setUsername(searchUsername);
+    }
+  }, []);
+
+  useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
     document.documentElement.style.colorScheme = theme;
   }, [theme]);
@@ -1398,149 +1407,149 @@ export default function App() {
         )}
 
         {headerVisible && (
-        <header className={themeStyles.header}>
-          <div className="flex items-center justify-between gap-5 px-6 py-3">
-            <div className="flex flex-1 items-center gap-4">
-              <div className="flex items-center gap-3">
-                {fetchedAvatar !== null && displayUsername !== "username" ? (
-                  <img src={fetchedAvatar}
-                    alt={`${displayUsername}'s avatar`}
-                    className={isLiveUser ? "relative flex h-16 w-16 rounded-full border-[3px] border-[solid] border-[#53fc18]" : "relative flex h-16 w-16 rounded-full filter grayscale"}
-                  />
-                ) : (
-                  <div className={cn("relative flex h-10 w-[60px] items-center justify-center rounded-[14px]", themeStyles.liveBadge)}>
-                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
-                      <rect width="20" height="14" rx="5" fill="currentColor" opacity="0.16" />
-                      <path d="M8 4.2L13.8 7L8 9.8V4.2Z" fill="white" />
-                    </svg>
+          <header className={themeStyles.header}>
+            <div className="flex items-center justify-between gap-5 px-6 py-3">
+              <div className="flex flex-1 items-center gap-4">
+                <div className="flex items-center gap-3">
+                  {fetchedAvatar !== null && displayUsername !== "username" ? (
+                    <img src={fetchedAvatar}
+                      alt={`${displayUsername}'s avatar`}
+                      className={isLiveUser ? "relative flex h-16 w-16 rounded-full border-[3px] border-[solid] border-[#53fc18]" : "relative flex h-16 w-16 rounded-full filter grayscale"}
+                    />
+                  ) : (
+                    <div className={cn("relative flex h-10 w-[60px] items-center justify-center rounded-[14px]", themeStyles.liveBadge)}>
+                      <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+                        <rect width="20" height="14" rx="5" fill="currentColor" opacity="0.16" />
+                        <path d="M8 4.2L13.8 7L8 9.8V4.2Z" fill="white" />
+                      </svg>
+                    </div>
+                  )}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h1 className={cn("text-2xl font-semibold tracking-tight", themeStyles.titleText)}>
+                        MultiTV
+                      </h1>
+                    </div>
+                    <p className={cn("mt-1 text-sm", themeStyles.mainCopy)}>
+                      <b>@{displayUsername}</b>
+                      {displayUsername !== "username" && (<>
+                        {hasViewers ? (<> {t("viewerCountText", { viewerCount })}</>) : (<> {t("noViewersText")}</>)}
+                      </>)}
+                    </p>
                   </div>
-                )}
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h1 className={cn("text-2xl font-semibold tracking-tight", themeStyles.titleText)}>
-                      MultiTV
-                    </h1>
-                  </div>
-                  <p className={cn("mt-1 text-sm", themeStyles.mainCopy)}>
-                    <b>@{displayUsername}</b>
-                    {displayUsername !== "username" && (<>
-                      {hasViewers ? (<> {t("viewerCountText", { viewerCount })}</>) : (<> {t("noViewersText")}</>)}
-                    </>)}
-                  </p>
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="group relative">
-                <button
-                  type="button"
-                  onClick={() => setHeaderVisible(false)}
-                  aria-label={t("hideHeader")}
-                  className={cn("inline-flex h-11 w-11 items-center justify-center rounded-full transition duration-200", themeStyles.toolbar)}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="6" rx="1" />
-                    <path d="m8 19 4-4 4 4" />
-                  </svg>
-                </button>
-                <span className={cn("pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium opacity-0 shadow-lg transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100", themeStyles.surface)}>
-                  {t("hideHeader")}
-                </span>
-              </div>
-
-              <div ref={gridMenuRef} className="relative">
-                <button
-                  type="button"
-                  onClick={() => setGridMenuOpen((current) => !current)}
-                  className={cn("inline-flex h-11 items-center gap-3 rounded-full px-4 text-sm font-medium transition duration-200", themeStyles.toolbar)}
-                >
-                  <GridSVG cols={gridOption.cols} rows={gridOption.rows} cells={gridOption.cells} size={18} />
-                  {gridOption.label}
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className={cn("transition duration-200", gridMenuOpen ? "rotate-180" : "")}
+              <div className="flex items-center gap-3">
+                <div className="group relative">
+                  <button
+                    type="button"
+                    onClick={() => setHeaderVisible(false)}
+                    aria-label={t("hideHeader")}
+                    className={cn("inline-flex h-11 w-11 items-center justify-center rounded-full transition duration-200", themeStyles.toolbar)}
                   >
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                </button>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="6" rx="1" />
+                      <path d="m8 19 4-4 4 4" />
+                    </svg>
+                  </button>
+                  <span className={cn("pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium opacity-0 shadow-lg transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100", themeStyles.surface)}>
+                    {t("hideHeader")}
+                  </span>
+                </div>
 
-                {gridMenuOpen && (
-                  <div className={cn("absolute right-0 top-full z-[60] mt-2 min-w-[180px] rounded-2xl p-2", themeStyles.surface)}>
-                    {GRID_OPTIONS.map((opt) => {
-                      const active = gridOption.id === opt.id;
-
-                      return (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => {
-                            setGridOption(opt);
-                            setGridMenuOpen(false);
-                          }}
-                          className={cn(
-                            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition duration-200",
-                            active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
-                          )}
-                        >
-                          <GridSVG cols={opt.cols} rows={opt.rows} cells={opt.cells} size={18} />
-                          {opt.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className={cn("inline-flex h-11 items-center gap-1 rounded-full p-1", themeStyles.toolbar)}>
-                {THEME_OPTIONS.map((option) => {
-                  const active = activeTheme === option.id;
-                  const isLightOption = option.id === "light";
-
-                  return (
-                    <button
-                      key={option.id}
-                      onClick={() => updateTheme(option.id)}
-                      aria-label={t(`themes.${option.id}`)}
-                      title={t(`themes.${option.id}`)}
-                      className={cn(
-                        "inline-flex h-9 w-9 items-center justify-center rounded-full transition duration-200",
-                        active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
-                      )}
+                <div ref={gridMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setGridMenuOpen((current) => !current)}
+                    className={cn("inline-flex h-11 items-center gap-3 rounded-full px-4 text-sm font-medium transition duration-200", themeStyles.toolbar)}
+                  >
+                    <GridSVG cols={gridOption.cols} rows={gridOption.rows} cells={gridOption.cells} size={18} />
+                    {gridOption.label}
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className={cn("transition duration-200", gridMenuOpen ? "rotate-180" : "")}
                     >
-                      {isLightOption ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="4" />
-                          <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" />
-                        </svg>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M21 14.2A8.5 8.5 0 0 1 9.8 3a9.2 9.2 0 1 0 11.2 11.2Z" />
-                        </svg>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
 
-              <button
-                onClick={openSettings}
-                className={cn("inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition duration-200", themeStyles.settingsButton)}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-                {t("settingsButton")}
-              </button>
+                  {gridMenuOpen && (
+                    <div className={cn("absolute right-0 top-full z-[60] mt-2 min-w-[180px] rounded-2xl p-2", themeStyles.surface)}>
+                      {GRID_OPTIONS.map((opt) => {
+                        const active = gridOption.id === opt.id;
+
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => {
+                              setGridOption(opt);
+                              setGridMenuOpen(false);
+                            }}
+                            className={cn(
+                              "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition duration-200",
+                              active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
+                            )}
+                          >
+                            <GridSVG cols={opt.cols} rows={opt.rows} cells={opt.cells} size={18} />
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className={cn("inline-flex h-11 items-center gap-1 rounded-full p-1", themeStyles.toolbar)}>
+                  {THEME_OPTIONS.map((option) => {
+                    const active = activeTheme === option.id;
+                    const isLightOption = option.id === "light";
+
+                    return (
+                      <button
+                        key={option.id}
+                        onClick={() => updateTheme(option.id)}
+                        aria-label={t(`themes.${option.id}`)}
+                        title={t(`themes.${option.id}`)}
+                        className={cn(
+                          "inline-flex h-9 w-9 items-center justify-center rounded-full transition duration-200",
+                          active ? themeStyles.toolbarActive : themeStyles.toolbarInactive
+                        )}
+                      >
+                        {isLightOption ? (
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" />
+                          </svg>
+                        ) : (
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21 14.2A8.5 8.5 0 0 1 9.8 3a9.2 9.2 0 1 0 11.2 11.2Z" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={openSettings}
+                  className={cn("inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition duration-200", themeStyles.settingsButton)}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                  {t("settingsButton")}
+                </button>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
         )}
 
         <main
@@ -1984,28 +1993,28 @@ export default function App() {
                                   <div>
                                     <p className={cn("text-sm font-semibold", themeStyles.titleText)}>{t("streamLabel", { index: idx + 1 })}</p>
                                     <p className={cn("text-xs uppercase tracking-[0.24em]", themeStyles.surfaceMuted)}>
-                                    {dim ? t("inactive") : t("active")}
-                                  </p>
+                                      {dim ? t("inactive") : t("active")}
+                                    </p>
+                                  </div>
                                 </div>
+                                {!dim && (
+                                  <button
+                                    type="button"
+                                    draggable
+                                    onDragStart={(event) => startStreamDrag(event, idx)}
+                                    onDragEnd={resetStreamDrag}
+                                    title={t("dragStream")}
+                                    aria-label={t("dragStream")}
+                                    className={cn("inline-flex h-9 w-9 cursor-grab items-center justify-center rounded-full transition active:cursor-grabbing", themeStyles.closeButton)}
+                                  >
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M8 6.5A1.5 1.5 0 1 1 6.5 5 1.5 1.5 0 0 1 8 6.5Zm0 5.5a1.5 1.5 0 1 1-1.5-1.5A1.5 1.5 0 0 1 8 12Zm0 5.5A1.5 1.5 0 1 1 6.5 16 1.5 1.5 0 0 1 8 17.5Zm9.5-11A1.5 1.5 0 1 1 16 5a1.5 1.5 0 0 1 1.5 1.5Zm0 5.5a1.5 1.5 0 1 1-1.5-1.5A1.5 1.5 0 0 1 17.5 12Zm0 5.5A1.5 1.5 0 1 1 16 16a1.5 1.5 0 0 1 1.5 1.5Z" />
+                                    </svg>
+                                  </button>
+                                )}
                               </div>
-                              {!dim && (
-                                <button
-                                  type="button"
-                                  draggable
-                                  onDragStart={(event) => startStreamDrag(event, idx)}
-                                  onDragEnd={resetStreamDrag}
-                                  title={t("dragStream")}
-                                  aria-label={t("dragStream")}
-                                  className={cn("inline-flex h-9 w-9 cursor-grab items-center justify-center rounded-full transition active:cursor-grabbing", themeStyles.closeButton)}
-                                >
-                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M8 6.5A1.5 1.5 0 1 1 6.5 5 1.5 1.5 0 0 1 8 6.5Zm0 5.5a1.5 1.5 0 1 1-1.5-1.5A1.5 1.5 0 0 1 8 12Zm0 5.5A1.5 1.5 0 1 1 6.5 16 1.5 1.5 0 0 1 8 17.5Zm9.5-11A1.5 1.5 0 1 1 16 5a1.5 1.5 0 0 1 1.5 1.5Zm0 5.5a1.5 1.5 0 1 1-1.5-1.5A1.5 1.5 0 0 1 17.5 12Zm0 5.5A1.5 1.5 0 1 1 16 16a1.5 1.5 0 0 1 1.5 1.5Z" />
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
 
-                            <div className="space-y-3">
+                              <div className="space-y-3">
                                 <label className="block">
                                   <span className={cn("mb-2 block text-xs font-semibold uppercase tracking-[0.24em]", themeStyles.surfaceMuted)}>
                                     {t("videoSlug")}
@@ -2080,10 +2089,10 @@ export default function App() {
                           </div>
                           <div
                             className={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ${shareStatus === "copied"
-                                ? "bg-emerald-400/10 text-emerald-300"
-                                : shareStatus === "error"
-                                  ? "bg-rose-400/10 text-rose-300"
-                                  : themeStyles.statusIdle
+                              ? "bg-emerald-400/10 text-emerald-300"
+                              : shareStatus === "error"
+                                ? "bg-rose-400/10 text-rose-300"
+                                : themeStyles.statusIdle
                               }`}
                           >
                             {shareStatus === "copied" && (
